@@ -1,0 +1,46 @@
+# Temporary files and directories
+temp/
+
+# Archive files
+public_html.tar.gz
+public_html_extracted.tar
+
+# Common files to ignore
+.env
+.env.local
+.env.production
+.env.staging
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Cache
+application/cache/
+application/logs/
+
+# Uploads (optional - uncomment if you don't want to track uploads)
+# uploads/
+
+# Composer (if using)
+vendor/
+composer.lock
+
+# Node modules (if using)
+node_modules/
+package-lock.json 

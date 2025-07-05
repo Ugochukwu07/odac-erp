@@ -1,0 +1,4 @@
+To Shoot Email and sms 
+run this commond on cron every 5 minutes
+
+/usr/bin/curl -s https://www.ranatravelschandigarh.com/api/Shootsmsmail/index >/dev/null 2>&1
