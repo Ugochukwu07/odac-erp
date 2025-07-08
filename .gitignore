@@ -10,6 +10,7 @@ public_html_extracted.tar
 .env.local
 .env.production
 .env.staging
+.env.ftp
 
 # IDE files
 .vscode/

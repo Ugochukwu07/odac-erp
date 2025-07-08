@@ -45,8 +45,13 @@ header('Access-Control-Allow-Origin: *');
 */
 
 
-$base_url  = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http");
-$base_url .= "://".$_SERVER['HTTP_HOST'].'/';
+// Handle CLI environment
+if (defined('STDIN')) {
+    $base_url = 'http://localhost/';
+} else {
+    $base_url  = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http");
+    $base_url .= "://".$_SERVER['HTTP_HOST'].'/';
+}
 //$base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']),"",$_SERVER['SCRIPT_NAME']);
  
 $config['base_url'] = $base_url;
@@ -551,84 +556,57 @@ $config['proxy_ips'] = '';
 
 
 
-/* get data from database for constant*/
-require_once( BASEPATH .'database/DB.php');
-$dbconfig =& DB(); 
-$queryconfig = $dbconfig->get_where('setting',['domain_id'=>'2']); 
-$rgtcnfg = $queryconfig->row_array();
-//print_r( $result );
+/*
+|--------------------------------------------------------------------------
+| Application Constants
+|--------------------------------------------------------------------------
+| Define application constants with default values
+|
+*/
 
-
-defined('SMSUSERNAME')        OR define('SMSUSERNAME', $rgtcnfg['smsuser'] ); 
-defined('SMSPASSWORD')        OR define('SMSPASSWORD', $rgtcnfg['smspassword'] );  
-defined('SENDERID')        OR define('SENDERID', $rgtcnfg['senderid']); 
-
-defined('UPLOADS')   OR define('UPLOADS', $base_url.'/uploads/'); 
- 
-
-
-defined('CAREMOBILE')      OR define('CAREMOBILE', $rgtcnfg['caremobile']);
-defined('CAREEMAIL')       OR define('CAREEMAIL', $rgtcnfg['careemail']);  
-defined('SMSADMINMOBILE')     OR define('SMSADMINMOBILE', $rgtcnfg['personalmobile']); 
-defined('ADMINEMAIL')       OR define('ADMINEMAIL', $rgtcnfg['personalemail']);  
-defined('DOMAINNAME')      OR define('DOMAINNAME', $_SERVER['SERVER_NAME'] );  
-defined('COMPANYNAME')      OR define('COMPANYNAME', $rgtcnfg['companyname'] ); 
-defined('ROOTPATH')     OR define('ROOTPATH', $_SERVER['DOCUMENT_ROOT'].'/' );  
-defined('REGISTRATIONNO')    OR define('REGISTRATIONNO', $rgtcnfg['registration_no']);
-
-defined('HEADOFFICE')      OR define('HEADOFFICE', $rgtcnfg['headoffice']);
-defined('BRANCHOFFICE')    OR define('BRANCHOFFICE', $rgtcnfg['branchoffice']);
-defined('WHATSUP')    OR define('WHATSUP', $rgtcnfg['whatsupno']);
-defined('MAPSCRIPT')    OR define('MAPSCRIPT', $rgtcnfg['mapscript']);
-
-define('URL',(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://{$_SERVER['HTTP_HOST']}" );
-
-
-defined('LOGO')   OR define('LOGO', UPLOADS.''.$rgtcnfg['logo']); 
-
-defined('PEADEXADMIN')   OR define('PEADEXADMIN', COMPANYNAME );
-defined('PEADEX')   OR define('PEADEX',$base_url ); 
-
-defined('GGOGLEPLACEKEY')    OR define('GGOGLEPLACEKEY', 'AIzaSyA33Nc-vkogu2ccN7evkSxFfsmS6PaGZ3Q'/*$rgtcnfg['placeapi']*/ ); 
-defined('GGOGLEMATRIX')      OR define('GGOGLEMATRIX','AIzaSyA33Nc-vkogu2ccN7evkSxFfsmS6PaGZ3Q'/* $rgtcnfg['matrixapi']*/); 
- 
-
-/* Firebase API Key for Customer app start here */
-define('FIREBASE_API_KEY_CUSTOMER', $rgtcnfg['custmerfirebkey'] ); 
-/* Firebase Customer API Key end here */ 
-
-defined('GSTIN')  OR define('GSTIN', $rgtcnfg['gstinno']);
-
-defined('FROMMAIL')     OR define('FROMMAIL', $rgtcnfg['frommail']); 
-defined('FMAILER')      OR define('FMAILER', $rgtcnfg['mailer']); 
-defined('FCC')          OR define('FCC', $rgtcnfg['cc']); 
-defined('FHOST')        OR define('FHOST', $rgtcnfg['hostip']); 
-defined('FSERVERUSER')  OR define('FSERVERUSER', $rgtcnfg['mailuser']);
-defined('FPASSWORD')    OR define('FPASSWORD',  $rgtcnfg['mailpassword'] ); 
-/* App Link start here */ 
- 
- 
-defined('CABGST')  OR define('CABGST', $rgtcnfg['gst']);
-defined('CABADVNCE')  OR define('CABADVNCE', $rgtcnfg['advance']);
-defined('ONLINECHARGE')  OR define('ONLINECHARGE', $rgtcnfg['onlinecharge']); 
-
-defined('SLIPCOLOR')  OR define('SLIPCOLOR', $rgtcnfg['slipcolor']);
-defined('SLIPTEXTCLR')  OR define('SLIPTEXTCLR', $rgtcnfg['sliptextcolor']);
-
- 
-/* get data from database for constant*/
-
-defined('RECAPTUAKEY')  OR define('RECAPTUAKEY', $rgtcnfg['captuakey']);
-defined('RECAPTUASECRETKEY')  OR define('RECAPTUASECRETKEY', $rgtcnfg['captuasecretkey']);
-
-defined('ADMINNOTIFY')  OR define('ADMINNOTIFY', $rgtcnfg['notification']);
-defined('SMSAPI')  OR define('SMSAPI', $rgtcnfg['sms']);
-
-/* social links */
-defined('FACEBOOK_S')  OR define('FACEBOOK_S', $rgtcnfg['facebook']);
-defined('LINKEDIN_S')  OR define('LINKEDIN_S', $rgtcnfg['linkedin']);
-defined('TWITTER_S')  OR define('TWITTER_S', $rgtcnfg['twitter']);
-defined('YOUTUBE_S')  OR define('YOUTUBE_S', $rgtcnfg['youtube']);
-defined('INSTAGRAM_S')  OR define('INSTAGRAM_S', $rgtcnfg['googleplus']);
-
-defined('DEFAULT_LOGO')  OR define('DEFAULT_LOGO', 'https://www.odac24.in/assets/cli/image/odac-cabs24.png' );
+// Define constants with default values
+if (!defined('SMSUSERNAME')) define('SMSUSERNAME', '');
+if (!defined('SMSPASSWORD')) define('SMSPASSWORD', '');
+if (!defined('SENDERID')) define('SENDERID', '');
+if (!defined('UPLOADS')) define('UPLOADS', $base_url . 'uploads/');
+if (!defined('CAREMOBILE')) define('CAREMOBILE', '');
+if (!defined('CAREEMAIL')) define('CAREEMAIL', '');
+if (!defined('SMSADMINMOBILE')) define('SMSADMINMOBILE', '');
+if (!defined('ADMINEMAIL')) define('ADMINEMAIL', '');
+if (!defined('DOMAINNAME')) define('DOMAINNAME', defined('STDIN') ? 'localhost' : ($_SERVER['HTTP_HOST'] ?? 'localhost'));
+if (!defined('COMPANYNAME')) define('COMPANYNAME', 'Odeac');
+if (!defined('ROOTPATH')) define('ROOTPATH', defined('STDIN') ? '/' : ($_SERVER['DOCUMENT_ROOT'] . '/'));
+if (!defined('REGISTRATIONNO')) define('REGISTRATIONNO', '');
+if (!defined('HEADOFFICE')) define('HEADOFFICE', '');
+if (!defined('BRANCHOFFICE')) define('BRANCHOFFICE', '');
+if (!defined('WHATSUP')) define('WHATSUP', '');
+if (!defined('MAPSCRIPT')) define('MAPSCRIPT', '');
+if (!defined('URL')) define('URL', $base_url);
+if (!defined('LOGO')) define('LOGO', UPLOADS . 'logo.png');
+if (!defined('PEADEXADMIN')) define('PEADEXADMIN', 'Odeac');
+if (!defined('PEADEX')) define('PEADEX', $base_url);
+if (!defined('GGOGLEPLACEKEY')) define('GGOGLEPLACEKEY', 'AIzaSyA33Nc-vkogu2ccN7evkSxFfsmS6PaGZ3Q');
+if (!defined('GGOGLEMATRIX')) define('GGOGLEMATRIX', 'AIzaSyA33Nc-vkogu2ccN7evkSxFfsmS6PaGZ3Q');
+if (!defined('FIREBASE_API_KEY_CUSTOMER')) define('FIREBASE_API_KEY_CUSTOMER', '');
+if (!defined('GSTIN')) define('GSTIN', '');
+if (!defined('FROMMAIL')) define('FROMMAIL', '');
+if (!defined('FMAILER')) define('FMAILER', '');
+if (!defined('FCC')) define('FCC', '');
+if (!defined('FHOST')) define('FHOST', '');
+if (!defined('FSERVERUSER')) define('FSERVERUSER', '');
+if (!defined('FPASSWORD')) define('FPASSWORD', '');
+if (!defined('CABGST')) define('CABGST', '');
+if (!defined('CABADVNCE')) define('CABADVNCE', '');
+if (!defined('ONLINECHARGE')) define('ONLINECHARGE', '');
+if (!defined('SLIPCOLOR')) define('SLIPCOLOR', '');
+if (!defined('SLIPTEXTCLR')) define('SLIPTEXTCLR', '');
+if (!defined('RECAPTUAKEY')) define('RECAPTUAKEY', '');
+if (!defined('RECAPTUASECRETKEY')) define('RECAPTUASECRETKEY', '');
+if (!defined('ADMINNOTIFY')) define('ADMINNOTIFY', '');
+if (!defined('SMSAPI')) define('SMSAPI', '');
+if (!defined('FACEBOOK_S')) define('FACEBOOK_S', '');
+if (!defined('LINKEDIN_S')) define('LINKEDIN_S', '');
+if (!defined('TWITTER_S')) define('TWITTER_S', '');
+if (!defined('YOUTUBE_S')) define('YOUTUBE_S', '');
+if (!defined('INSTAGRAM_S')) define('INSTAGRAM_S', '');
+if (!defined('DEFAULT_LOGO')) define('DEFAULT_LOGO', 'https://www.odac24.in/assets/cli/image/odac-cabs24.png');
