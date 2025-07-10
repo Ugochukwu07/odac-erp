@@ -89,7 +89,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-$autoload['helper'] = array('my_function','url','form','pushnotification');
+$autoload['helper'] = array('my_function','url','form','pushnotification','rbac');
 
 /*
 | -------------------------------------------------------------------

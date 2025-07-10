@@ -5,8 +5,29 @@ if(empty($session_data)){
   redirect( base_url('mylogin.html') ); exit;
 }
 
-$user_type = $session_data['user_type'];
+
+// RBAC-aware user type handling
+$user_roles = isset($session_data['user_roles']) ? $session_data['user_roles'] : [];
+$user_type = 'admin'; // Default
+
+if (!empty($user_roles)) {
+    if (in_array('Super Admin', $user_roles)) {
+        $user_type = 'admin';
+    } elseif (in_array('Manager', $user_roles)) {
+        $user_type = 'manager';
+    } elseif (in_array('User', $user_roles)) {
+        $user_type = 'user';
+    }
+}
+
+// Load RBAC helper for hierarchy functions
+if (!function_exists('get_admin_hierarchy_display')) {
+    require_once APPPATH . 'helpers/rbac_helper.php';
+}
+
 $bookingType = $this->input->get('type');
+$current_user_level = get_admin_hierarchy_level();
+$current_user_display = get_admin_hierarchy_display();
 ?>
 
 
@@ -100,6 +121,29 @@ $bookingType = $this->input->get('type');
           <div class="col-lg-3"> 
           <a href="<?php echo $exporturl;?>" class="btn btn-sm btn-success"><i class="fa fa-download"></i> Download CSV </a>
           <?php echo goToDashboard(); ?>
+          </div>
+          
+          <!-- Admin Hierarchy Information -->
+          <div class="col-lg-9">
+            <div class="alert alert-info" style="margin-bottom: 10px;">
+              <i class="fa fa-info-circle"></i> 
+              <strong>Admin Hierarchy:</strong> You are logged in as 
+              <span class="label <?php echo get_admin_hierarchy_badge_class(); ?>"><?php echo $current_user_display; ?></span>
+              
+              <?php if($current_user_level == 1): ?>
+                <span class="text-success">(Can track all admin activities)</span>
+              <?php elseif($current_user_level == 2): ?>
+                <span class="text-warning">(Can track Manager and User activities)</span>
+              <?php else: ?>
+                <span class="text-info">(Can track only User activities)</span>
+              <?php endif; ?>
+              
+              <?php if($current_user_level <= 2): ?>
+                <a href="<?php echo adminurl('AdminActivity'); ?>" class="btn btn-xs btn-primary pull-right">
+                  <i class="fa fa-users"></i> View Admin Activity Report
+                </a>
+              <?php endif; ?>
+            </div>
           </div>
 
                <div class="col-lg-7">

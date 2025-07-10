@@ -1,78 +1,96 @@
 
-<script src="<?php echo PEADEX;?>assets/cli/js/jquery-1.12.0.js"  type="text/javascript"></script>
-<script src="<?php echo PEADEX;?>assets/cli/js/bootstrap.min.js"  type="text/javascript"></script>
+    <script src="<?php echo PEADEX;?>assets/cli/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+<script src="<?php echo PEADEX;?>assets/cli/js/custom.js" type="text/javascript"></script>
+<script src="<?php echo PEADEX;?>assets/cli/js/datetimepicker.js" type="text/javascript"></script>
+
+<!-- Modern theme JS includes removed as per revert request -->
 
 <script>
+// Modern JavaScript functions (no jQuery dependency)
 function Viewmap() {
-    $('html,body').animate({
-        scrollTop: $(".viewmap").offset().top},
-        'slow');
+    const viewmapElement = document.querySelector(".viewmap");
+    if (viewmapElement) {
+        viewmapElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
     }
+}
 
 function gototop(id) {
-    $('html,body').animate({
-        scrollTop: $('.'+id).offset().top},
-        'slow');
+    const targetElement = document.querySelector('.' + id);
+    if (targetElement) {
+        targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    }
 }
-</script>
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
     
-    <script>
-$(document).ready(function(){
-
-/* scroll and fixed header */
-	var navbar = $('.sticky');
-    $(window).scroll(function () {
-	 if (window.innerWidth > 960) {
-        if ($(this).scrollTop() > 156) {
-            navbar.addClass("fixed-nav");
-        } else {
-            navbar.removeClass("fixed-nav");
+    // Sticky header functionality
+    const navbar = document.querySelector('.sticky');
+    if (navbar) {
+        window.addEventListener('scroll', function() {
+            if (window.innerWidth > 960) {
+                if (window.pageYOffset > 156) {
+                    navbar.classList.add("fixed-nav");
+                } else {
+                    navbar.classList.remove("fixed-nav");
+                }
+            } else {
+                navbar.classList.remove("fixed-nav");
+            }
+        });
+    }
+    
+    // Back to top functionality
+    const backTop = document.getElementById("back-top");
+    if (backTop) {
+        // Hide back-top initially
+        backTop.style.display = 'none';
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 100) {
+                backTop.style.display = 'block';
+                backTop.style.opacity = '1';
+            } else {
+                backTop.style.opacity = '0';
+                setTimeout(() => {
+                    if (backTop.style.opacity === '0') {
+                        backTop.style.display = 'none';
+                    }
+                }, 300);
+            }
+        });
+        
+        // Scroll to top on click
+        const backTopLink = backTop.querySelector('a');
+        if (backTopLink) {
+            backTopLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
         }
-		} else {
-            nav.removeClass("fixed-nav");
-        }
-});
-/* scroll and fixed header */
-
-
-	// hide #back-top first
-	$("#back-top").hide();
-	
-	// fade in #back-top
-	$(function () {
-		$(window).scroll(function () {
-			if ($(this).scrollTop() > 100) {
-				$('#back-top').fadeIn();
-			} else {
-				$('#back-top').fadeOut();
-			}
-		});
-
-		// scroll body to 0px on click
-		$('#back-top a').click(function () {
-			$('body,html').animate({
-				scrollTop: 0
-			}, 800);
-			return false;
-		});
-	});
-	
-
-
+    }
 });
 
-function indexto(){
-	var x = confirm("Please Create a Booking Using Software.");
-  if (x){
-       window.location.href="<?php echo PEADEX;?>";
-	   return true;
-  }
-  else{
-    return false;
-  }
+function indexto() {
+    const x = confirm("Please Create a Booking Using Software.");
+    if (x) {
+        window.location.href = "<?php echo PEADEX;?>";
+        return true;
+    } else {
+        return false;
+    }
 }
 
-function gotopage(id){
-	window.location.href="<?php echo PEADEX;?>"+id;
+function gotopage(id) {
+    window.location.href = "<?php echo PEADEX;?>" + id;
 }
 </script>

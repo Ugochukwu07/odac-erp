@@ -2,6 +2,9 @@
 
 class Vehicle_doc_expires extends CI_Controller{
 	 var $pagename;
+	 public $input;
+	 public $c_model;
+	 public $db;
      function __construct() {
          parent::__construct();  
 	     adminlogincheck();
@@ -81,7 +84,7 @@ class Vehicle_doc_expires extends CI_Controller{
 		        $push = [];
 		        $push = $value;  
 		         
-		        $lastEditRecord = $value['edit_verify_status'] == 'edit' ? $this->db->query("select edited_field,previous_value,new_value from pt_vehicle_details_editing_log where table_id = '".$value['id']."' AND DATE(edited_on) = '".date('Y-m-d',strtotime($value['edit_date']))."' GROUP BY edited_field ORDER BY id  limit 10")->result_array() : [];
+		        $lastEditRecord = !empty($value['edit_verify_status']) && $value['edit_verify_status'] == 'edit' ? $this->db->query("select edited_field,previous_value,new_value from pt_vehicle_details_editing_log where table_id = '".$value['id']."' AND DATE(edited_on) = '".date('Y-m-d',strtotime($value['edit_date']))."' GROUP BY edited_field ORDER BY id  limit 10")->result_array() : [];
 				$push['last_edit'] = '';
 				$last_edit = '';
 				if(!empty($lastEditRecord)){

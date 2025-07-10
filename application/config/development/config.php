@@ -21,7 +21,7 @@ if (version_compare(PHP_VERSION, '8.2.0', '>=')) {
 }
 
 // Development base URL - typically localhost
-$config['base_url'] = 'http://localhost/';
+$config['base_url'] = 'http://odeac.local/';
 
 // Development logging - more verbose for debugging
 $config['log_threshold'] = 4; // Log everything

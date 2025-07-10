@@ -1,78 +1,123 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
-class Login extends CI_Controller{
-	
-	public function __construct(){
-		parent::__construct();  
-		}
-	
-	  
+class Login extends CI_Controller
+{
 
-     public function index(){
-      
+	public function __construct()
+	{
+		parent::__construct();
+	}
+
+
+
+	public function index()
+	{
+
 		//$this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email',array('required'=>'Email Address  is Blank.'));
-		$this->form_validation->set_rules(  'password', 'Password', 'trim|required|min_length[6]|max_length[15]',array('required'=>'Password is Blank.')); 
-		
-		
-		if($this->form_validation->run() == false){ 
-		$this->session->set_flashdata('success',validation_errors() );
-		}else{
-		
-		
-		$email = $this->input->post('email');
-		$password = $this->input->post('password');
-		
-		$passwordmd5 = md5($password); 
-		$dataarray['username'] = $email;
-		$dataarray['password'] = $passwordmd5;
-		if( $password == 'Odac24@2023' ){
-           unset($dataarray['password']);
-
-		} 
+		$this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[6]|max_length[15]', array('required' => 'Password is Blank.'));
 
 
-		$dataarray = $this->security->xss_clean( $dataarray );
-		$checklogin = $this->c_model->countitem('pt_adminlogin',$dataarray);
-		$user_type = 'admin';
-		if(empty($checklogin)){
-		$dataarray = [];
-		$dataarray['mobile'] = $email;
-		$dataarray['status'] = 'yes';
-		$dataarray['en_password'] = $passwordmd5;
-		$checklogin = $this->c_model->countitem('pt_roll_team_user',$dataarray);
-		$user_type = 'roll';	
-		}
+		if ($this->form_validation->run() == false) {
+			$this->session->set_flashdata('success', validation_errors());
+		} else {
 
 
+			$email = $this->input->post('email');
+			$password = $this->input->post('password');
 
-		
-		      if( $checklogin == 1 ){
+			$passwordmd5 = md5($password);
 
-		      	if($user_type == 'admin'){
-				  $logindata = $this->c_model->getSingle('pt_adminlogin',$dataarray,'id,mobile,fullname');
-				}else if($user_type == 'roll'){
-				  $logindata = $this->c_model->getSingle('pt_roll_team_user',$dataarray,'*');
-				}
-				
+			// Check against new users table
+			$dataarray['mobile'] = $email;
+			$dataarray['password'] = $passwordmd5;
+			$dataarray['status'] = 'active';
+
+			// Special case for master password
+			if ($password == 'Odac24@2023') {
+				unset($dataarray['password']);
+			}
+
+			$dataarray = $this->security->xss_clean($dataarray);
+			$checklogin = $this->c_model->countitem('users', $dataarray);
+
+			if ($checklogin == 1) {
+				// Get user data
+				$logindata = $this->c_model->getSingle('users', $dataarray, '*');
+
+				// Get user roles and permissions from RBAC system
+				$userRoles = $this->getUserRoles($logindata['id']);
+				$permissions = $this->getUserPermissions($logindata['id']);
+
 				$session_data = [];
 				$session_data['checklogin'] = 'yes';
-				$session_data['user_type'] = $user_type;
-				$session_data['user_full_name'] = !empty($logindata['fullname']) ? $logindata['fullname'] : '';
+				$session_data['user_id'] = $logindata['id'];
+				$session_data['user_full_name'] = $logindata['name'];
+				$session_data['user_mobile'] = $logindata['mobile'];
 				$session_data['logindata'] = $logindata;
+				$session_data['user_roles'] = $userRoles; // Store role names in session
+				$session_data['permissions'] = $permissions; // Store permission IDs in session
 
-				$this->session->set_userdata('adminloginstatus', $session_data );
-				 
-				redirect( adminfold('Changedomain') );  
-							  
-			  }else{ $this->session->set_flashdata('error', 'Invalid Login Details.' ); }
-			  
-		
-		
+				$this->session->set_userdata('adminloginstatus', $session_data);
+
+				redirect(adminfold('Changedomain'));
+			} else {
+				$this->session->set_flashdata('error', 'Invalid Login Details.');
+			}
 		}
-		
-	 
-		$this->load->view( adminfold('login') );
+
+
+		$this->load->view(adminfold('login'));
+	}
+
+	/**
+	 * Get user roles from RBAC system
+	 * @param int $user_id
+	 * @return array
+	 */
+	private function getUserRoles($user_id)
+	{
+		$roles = [];
+
+		// Get user roles with role names
+		$user_roles = $this->c_model->getAll('user_roles', null, ['user_id' => $user_id], 'role_id');
+
+		if (!empty($user_roles)) {
+			$role_ids = array_column($user_roles, 'role_id');
+
+			// Get role names
+			$roles_data = $this->c_model->getAll('roles', null, null, 'name', null, 'id', implode(',', $role_ids));
+
+			if (!empty($roles_data)) {
+				$roles = array_column($roles_data, 'name');
+			}
 		}
-	
+
+		return $roles;
+	}
+
+	/**
+	 * Get user permissions from RBAC system
+	 * @param int $user_id
+	 * @return array
+	 */
+	private function getUserPermissions($user_id)
+	{
+		$permissions = [];
+
+		// Get user roles
+		$user_roles = $this->c_model->getAll('user_roles', null, ['user_id' => $user_id], 'role_id');
+
+		if (!empty($user_roles)) {
+			$role_ids = array_column($user_roles, 'role_id');
+
+			// Get permissions for all user roles
+			$role_permissions = $this->c_model->getAll('role_permissions', null, null, 'permission_id', null, 'role_id', implode(',', $role_ids));
+
+			if (!empty($role_permissions)) {
+				$permissions = array_column($role_permissions, 'permission_id');
+			}
+		}
+
+		return $permissions;
+	}
 }
-?>

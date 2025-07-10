@@ -22,6 +22,10 @@ class Makebooking extends CI_Controller{
     if($post = $this->input->post()){
      unset($post['mysubmit']) ; 
 
+     if(empty($post['c_paymode'])){
+       $post['c_paymode'] = 'paid';
+     }
+
      /*check customer entry start script*/
      if($post['c_mobile']){
      	$check['uniqueid'] = trim($post['c_mobile']);
@@ -30,6 +34,7 @@ class Makebooking extends CI_Controller{
      	$save['mobileno'] = trim($post['c_mobile']);
      	$save['emailid'] = trim($post['c_email']); 
      	$save['fullname'] = trim($post['c_name']);
+        $save['address'] = trim($post['c_address']);
      	$save['status'] = 'yes';
      	$update = $this->c_model->saveupdate('pt_customer', $save, $check );
         if($update && empty($post['c_uid'])){ $post['c_uid'] = $update; }
@@ -57,6 +62,7 @@ class Makebooking extends CI_Controller{
     $data['c_name'] = '';
     $data['c_mobile'] = '';
     $data['c_email'] = '';
+    $data['c_address'] = '';
     $data['c_trip'] = '';
     $data['c_paymode'] = 'cash';
     $data['c_txn_id'] = '';
@@ -68,6 +74,7 @@ class Makebooking extends CI_Controller{
             $data['c_name'] = $return['c_name'];
             $data['c_mobile'] = $return['c_mobile'];
             $data['c_email'] = $return['c_email'];
+            $data['c_address'] = !empty($return['c_address']) ? $return['c_address'] : '';
             $data['c_trip'] = $return['c_trip'];
             $data['c_paymode'] = $return['c_paymode'];
             $data['c_ad_amount'] = $return['c_ad_amount'];
@@ -84,7 +91,7 @@ class Makebooking extends CI_Controller{
 
    public function getdetails(){
    	$post = $this->input->post();
-   	$keys = 'uniqueid,emailid,fullname,id';
+   	$keys = 'uniqueid,emailid,fullname,id,address';
    	$output = $this->c_model->getSingle('pt_customer',$post ,$keys );
    	echo json_encode( $output );
    }

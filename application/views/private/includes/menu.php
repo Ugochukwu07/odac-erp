@@ -4,9 +4,29 @@ if(empty($session_data)){
   redirect( base_url('mylogin.html') ); exit;
 }
 
-$user_type = $session_data['user_type'];
-$user_menu_ids = !empty($session_data['logindata']['menuids'])?$session_data['logindata']['menuids']:'';
+// RBAC-aware user type and menu handling
+$user_roles = isset($session_data['user_roles']) ? $session_data['user_roles'] : [];
+$user_type = 'admin'; // Default
+
+if (!empty($user_roles)) {
+    if (in_array('Super Admin', $user_roles)) {
+        $user_type = 'admin';
+    } elseif (in_array('Manager', $user_roles)) {
+        $user_type = 'manager';
+    } elseif (in_array('User', $user_roles)) {
+        $user_type = 'user';
+    }
+}
+
+// For now, use the old menu system but make it RBAC-aware
+// TODO: Convert to use permissions instead of menu IDs
+$user_menu_ids = !empty($session_data['logindata']['menuids']) ? $session_data['logindata']['menuids'] : '';
 $user_menu_ids = !empty($user_menu_ids) ? explode(',', $user_menu_ids) : [];
+
+// Make RBAC helper functions available in views
+if (!function_exists('has_permission')) {
+    require_once APPPATH . 'helpers/rbac_helper.php';
+}
 
 $segment = strtolower( ci()->uri->segment(2) );
 $getmenu_list = file_get_contents('uploads/menu/menulist.txt');
@@ -314,12 +334,12 @@ function get_parent_id_s($listdata,$id){
 
 
 <?php if( in_array(43, $user_menu_ids)){ ?>
-<li><a href="<?php echo adminurl('makebooking');?>" target="_blank"><i class="fa fa-table"></i> <span>Create Booking</span></a></li>
+<li><a href="<?php echo adminurl('makebooking');?>"><i class="fa fa-table"></i> <span>Create Booking</span></a></li>
 <?php }?>
 
 
 <?php if( in_array(44, $user_menu_ids)){ ?>
-<li><a href="<?php echo adminurl('createslot');?>" target="_blank"><i class="fa fa-table"></i> <span>Create Slot</span></a></li>
+<li><a href="<?php echo adminurl('createslot');?>"><i class="fa fa-table"></i> <span>Create Slot</span></a></li>
 <?php }?>
 
 <?php if( in_array(45, $user_menu_ids)){ ?>
@@ -337,12 +357,34 @@ function get_parent_id_s($listdata,$id){
  </li>
 <?php }?>
 
-<?php if( in_array(48, $user_menu_ids)){ ?>
-<li><a href="<?php echo adminurl('payment_list?n=&f='.date('Y-m-d',strtotime( date('Y-m-d').' -7 days')).'&t='.date('Y-m-d') );?>" target="_blank"><i class="fa fa-table"></i> <span>Payment List</span></a></li>
+<?php if(has_permission('user_management') || has_permission('role_management') || is_admin()){ ?>
+<li class="treeview listings">
+    <a href="javascript:void(0);">
+    <i class="fa fa-users"></i> <span>User & Role Management</span>
+    <span class="pull-right-container">
+    <i class="fa fa-angle-left pull-right"></i>
+    </span>
+    </a>
+    <ul class="treeview-menu">
+    <?php if(has_permission('role_management') || is_admin()){ ?>
+        <li><a href="<?php echo adminurl('Roles');?>"><i class="fa fa-circle-o"></i> Manage Roles</a></li>
+    <?php }?>
+    <?php if(has_permission('user_management') || is_admin()){ ?>
+        <li><a href="<?php echo adminurl('Users');?>"><i class="fa fa-circle-o"></i> Manage Users</a></li>
+    <?php }?>
+    <?php if(has_permission('admin_activity_tracking') || is_admin()){ ?>
+        <li><a href="<?php echo adminurl('AdminActivity');?>"><i class="fa fa-circle-o"></i> Admin Activity Tracking</a></li>
+    <?php }?>
+    </ul>
+ </li>
 <?php }?>
 
 <?php if( in_array(48, $user_menu_ids)){ ?>
-<li><a href="<?php echo adminurl('sale_list?type=today');?>" target="_blank"><i class="fa fa-table"></i> <span>Sales List</span></a></li>
+<li><a href="<?php echo adminurl('payment_list?n=&f='.date('Y-m-d',strtotime( date('Y-m-d').' -7 days')).'&t='.date('Y-m-d') );?>"><i class="fa fa-table"></i> <span>Payment List</span></a></li>
+<?php }?>
+
+<?php if( in_array(48, $user_menu_ids)){ ?>
+<li><a href="<?php echo adminurl('sale_list?type=today');?>"><i class="fa fa-table"></i> <span>Sales List</span></a></li>
 <?php }?>
 
 <?php if( in_array(49, $user_menu_ids)){ ?>

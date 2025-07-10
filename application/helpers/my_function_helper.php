@@ -24,6 +24,60 @@ function adminlogincheck(){
 	if(!$logincheck['checklogin']){ ci()->session->sess_destroy();  redirect( PEADEX.'mylogin.html' );  }  
 }
 
+/**
+ * Check if current user has a specific permission
+ * @param int $permission_id
+ * @return bool
+ */
+function checkPermission($permission_id) {
+	$logincheck = ci()->session->userdata('adminloginstatus');
+	if (!$logincheck || !isset($logincheck['permissions'])) {
+		return false;
+	}
+	
+	return in_array($permission_id, $logincheck['permissions']);
+}
+
+/**
+ * Check if current user has any of the specified permissions
+ * @param array $permission_ids
+ * @return bool
+ */
+function checkAnyPermission($permission_ids) {
+	$logincheck = ci()->session->userdata('adminloginstatus');
+	if (!$logincheck || !isset($logincheck['permissions'])) {
+		return false;
+	}
+	
+	foreach ($permission_ids as $permission_id) {
+		if (in_array($permission_id, $logincheck['permissions'])) {
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+/**
+ * Check if current user has all of the specified permissions
+ * @param array $permission_ids
+ * @return bool
+ */
+function checkAllPermissions($permission_ids) {
+	$logincheck = ci()->session->userdata('adminloginstatus');
+	if (!$logincheck || !isset($logincheck['permissions'])) {
+		return false;
+	}
+	
+	foreach ($permission_ids as $permission_id) {
+		if (!in_array($permission_id, $logincheck['permissions'])) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
 function checkdomain($key=null){
 	$arr = ci()->session->userdata('checkdomain'); 
 	return (!empty($key) && !empty($arr)) ? $arr[$key] : $arr;

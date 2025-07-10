@@ -273,6 +273,15 @@ class Bookingview extends CI_Controller{
             $bookingtype = $post['type'];
             $is_rest_amount = !empty($post['is_rest_amount']) ? $post['is_rest_amount']:'';
             
+            // Load RBAC helper for hierarchy filtering
+            $this->load->helper('rbac');
+            
+            // Apply admin hierarchy filter
+            $hierarchy_filter = get_admin_hierarchy_filter();
+            if (!empty($hierarchy_filter)) {
+                $where = array_merge($where, $hierarchy_filter);
+            }
+            
             
             if(in_array($bookingtype,['total'])){
             $where['a.attemptstatus !='] = 'temp';

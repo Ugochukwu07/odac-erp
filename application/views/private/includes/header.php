@@ -1,3 +1,9 @@
+<style>
+  .nav-item.dropdown,
+  .nav-item.dropdown * {
+    background-color:rgba(255, 0, 0, 0.45) !important;
+  }
+</style>
 </head>
 <?php
 $session_data = $this->session->userdata('adminloginstatus');
@@ -21,83 +27,119 @@ $_SESSION['last_activity'] = time();
 
 
 
-$user_type = $session_data['user_type'];
-$loginUserName = $session_data['user_full_name'].' ( '.ucwords($user_type).' )';
+// Get user roles from session (RBAC-aware)
+$user_roles = isset($session_data['user_roles']) ? $session_data['user_roles'] : [];
+$primary_role = !empty($user_roles) ? $user_roles[0] : 'User'; // Use first role as primary
+$loginUserName = $session_data['user_full_name'].' ( '.ucwords($primary_role).' )';
+
+// For backward compatibility, set user_type based on roles
+$user_type = 'admin'; // Default
+if (!empty($user_roles)) {
+    if (in_array('Super Admin', $user_roles)) {
+        $user_type = 'admin';
+    } elseif (in_array('Manager', $user_roles)) {
+        $user_type = 'manager';
+    } elseif (in_array('User', $user_roles)) {
+        $user_type = 'user';
+    }
+}
+
+// Make RBAC helper functions available in views
+if (!function_exists('has_permission')) {
+    require_once APPPATH . 'helpers/rbac_helper.php';
+}
 
 ?>
 
 <body class="hold-transition skin-blue sidebar-mini" onLoad="viewmsg();">
 <div class="wrapper">
-<header class="main-header ">
+<header class="main-header">
     <!-- Logo -->
-    <?php /*<a href="<?php echo adminurl('Dashboard');?>" class="logo"> 
-      <span class="logo-mini"><b>A</b>RC</span> 
-      <span class="logo-lg"> <center><?php echo PEADEXADMIN;?></center></span>
-    </a>*/?>
+    <a href="<?php echo adminurl('Dashboard');?>" class="navbar-brand">
+      <span class="logo-mini"><b>O</b>DE</span> 
+      <span class="logo-lg"><?php echo COMPANYNAME;?></span>
+    </a>
 
     <!-- Header Navbar: style can be found in header.less -->
-    <nav class="navbar navbar-static-top">
-      <!-- Sidebar toggle button--> 
+    <nav class="navbar navbar-expand-lg navbar-static-top">
+      <div class="container-fluid">
+        <!-- Sidebar toggle button--> 
+        <button class="navbar-toggler sidebar-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarCollapse" aria-controls="sidebarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-        <span class="sr-only">Toggle navigation</span>
-      </a>
+        <!-- Header Menu -->
+        <div class="navbar-nav me-auto">
+          <div class="headermenu">
+            <h3 style="color: #fff; margin: 0;"><?= checkdomain('domain');?> | <?php echo isset($title) ? $title : '';?></h3>
+          </div>
+        </div>
 
-      <div class="pull-left headermenu">
-        <h3 style="color: #fff"><?= checkdomain('domain');?> |  <?php echo isset($title) ? $title : '';?>  
-        </h3>
-      </div>
-
- 
-      <div class="navbar-custom-menu">
-        <ul class="nav navbar-nav">
+        <!-- Navbar Custom Menu -->
+        <div class="navbar-nav ms-auto">
           <!-- Messages: style can be found in dropdown.less-->
-          <li class="dropdown messages-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          <div class="nav-item dropdown position-static">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-envelope-o"></i>
-              <span class="label label-success">4</span>
+              <span class="badge bg-success">4</span>
             </a>
-          </li>
-
-          <li class="dropdown notifications-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
-            </a>
-          </li>
-
-          <li class="dropdown tasks-menu open">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-              <i class="fa fa-flag-o"></i>
-              <span class="label label-danger">9</span>
-            </a>
-          </li>
-
-        
-          <!-- User Account: style can be found in dropdown.less -->
-          <li class="dropdown user user-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-user"></i>
-              <span class="hidden-xs"><?php echo $loginUserName;?></span>
-            </a>
-            <ul class="dropdown-menu">  
-              <li class="user-footer"> 
-                <?php if($user_type=='admin'){?>
-                  <a href="<?php echo adminurl('Changepassword');?>" class="btn btn-default btn-flat">Change Password</a> 
-                  <a href="<?php echo adminurl('webconfig');?>" class="btn btn-default btn-flat">Web Config</a>
-                  <?php }else{?>
-                  <a href="<?php echo adminurl('Changerolepassword');?>" class="btn btn-default btn-flat">Change Password</a> 
-                  <?php }?>
-                  <a href="<?php echo adminurl('Changedomain');?>" class="btn btn-default btn-flat">Change Domain</a>
-                  <a href="<?php echo adminurl('websettings');?>" class="btn btn-default btn-flat">Address Settings</a>
-                  <a href="<?php echo adminurl('Logout');?>" class="btn btn-default btn-flat">Sign out</a> 
-                   
-              </li>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Message 1</a></li>
+              <li><a class="dropdown-item" href="#">Message 2</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">View all messages</a></li>
             </ul>
-          </li>
-          <!-- Control Sidebar Toggle Button -->
-          
-        </ul>
+          </div>
+
+          <!-- Notifications -->
+          <div class="nav-item dropdown position-static">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa fa-bell-o"></i>
+              <span class="badge bg-warning">10</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Notification 1</a></li>
+              <li><a class="dropdown-item" href="#">Notification 2</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">View all notifications</a></li>
+            </ul>
+          </div>
+
+          <!-- Tasks -->
+          <div class="nav-item dropdown position-static">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa fa-flag-o"></i>
+              <span class="badge bg-danger">9</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Task 1</a></li>
+              <li><a class="dropdown-item" href="#">Task 2</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">View all tasks</a></li>
+            </ul>
+          </div>
+
+          <!-- User Account: style can be found in dropdown.less -->
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fa fa-user"></i>
+              <span class="d-none d-lg-inline"><?php echo $loginUserName;?></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="dropdown-header">User Menu</li>
+              <?php if($user_type=='admin'){?>
+                <li><a class="dropdown-item" href="<?php echo adminurl('Changepassword');?>"><i class="fa fa-key me-2"></i>Change Password</a></li>
+                <li><a class="dropdown-item" href="<?php echo adminurl('webconfig');?>"><i class="fa fa-cog me-2"></i>Web Config</a></li>
+              <?php }else{?>
+                <li><a class="dropdown-item" href="<?php echo adminurl('Changerolepassword');?>"><i class="fa fa-key me-2"></i>Change Password</a></li>
+              <?php }?>
+              <li><a class="dropdown-item" href="<?php echo adminurl('Changedomain');?>"><i class="fa fa-globe me-2"></i>Change Domain</a></li>
+              <li><a class="dropdown-item" href="<?php echo adminurl('websettings');?>"><i class="fa fa-map-marker me-2"></i>Address Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="<?php echo adminurl('Logout');?>"><i class="fa fa-sign-out me-2"></i>Sign out</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </nav>
   </header>

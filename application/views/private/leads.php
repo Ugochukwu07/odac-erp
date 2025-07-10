@@ -5,7 +5,20 @@ if(empty($session_data)){
   redirect( base_url('mylogin.html') ); exit;
 }
 
-$user_type = $session_data['user_type'];
+
+// RBAC-aware user type handling
+$user_roles = isset($session_data['user_roles']) ? $session_data['user_roles'] : [];
+$user_type = 'admin'; // Default
+
+if (!empty($user_roles)) {
+    if (in_array('Super Admin', $user_roles)) {
+        $user_type = 'admin';
+    } elseif (in_array('Manager', $user_roles)) {
+        $user_type = 'manager';
+    } elseif (in_array('User', $user_roles)) {
+        $user_type = 'user';
+    }
+}
 $bookingType = $this->input->get('type');
 ?>
 

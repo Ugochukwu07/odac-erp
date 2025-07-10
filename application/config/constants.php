@@ -110,7 +110,6 @@ defined('RAZOR_PAY_SECRET_KEY')    OR define('RAZOR_PAY_SECRET_KEY', '');
 defined('RAZOR_PAY_ENABLE_DISABLE')        OR define('RAZOR_PAY_ENABLE_DISABLE', 'enable' ); //ENABLE: enable, DISABLE: disable; 
 
 defined('INVOICE_PRINT_NEW_FORMAT')        OR define('INVOICE_PRINT_NEW_FORMAT', '2024-04-27 15:40:00'); 
-
 /*
 |--------------------------------------------------------------------------
 | Error Logging Threshold
@@ -382,3 +381,4 @@ $config['rewrite_short_tags'] = FALSE;
 | Array:		array('10.0.1.200', '192.168.5.0/24')
 */
 $config['proxy_ips'] = '';
+

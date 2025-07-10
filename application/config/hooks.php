@@ -12,4 +12,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 
+$hook['post_controller_constructor'][] = array(
+    'class'    => 'App_hooks',
+    'function' => 'set_db_sql_mode',
+    'filename' => 'App_hooks.php',
+    'filepath' => 'hooks'
+);
+
 
