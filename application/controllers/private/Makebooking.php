@@ -54,7 +54,7 @@ class Makebooking extends CI_Controller{
      $this->session->set_userdata('adminbooking',$post);
 
 
-     redirect( PEADEX );
+     redirect( PEADEXADMIN );
     }  
 
 

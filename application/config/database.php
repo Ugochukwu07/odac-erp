@@ -73,24 +73,25 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = 'default';
 $query_builder = TRUE;
 
+
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'u359265976_user',
-	'password' => 'f8U$/vItI4',
-	'database' => 'u359265976_db',
-	'dbdriver' => 'mysqli',
+	'hostname' => isset($_ENV['DB_HOSTNAME']) ? $_ENV['DB_HOSTNAME'] : 'localhost',
+	'username' => isset($_ENV['DB_USERNAME']) ? $_ENV['DB_USERNAME'] : 'u359265976_user',
+	'password' => isset($_ENV['DB_PASSWORD']) ? $_ENV['DB_PASSWORD'] : 'f8U$/vItI4',
+	'database' => isset($_ENV['DB_DATABASE']) ? $_ENV['DB_DATABASE'] : 'u359265976_db',
+	'dbdriver' => isset($_ENV['DB_DRIVER']) ? $_ENV['DB_DRIVER'] : 'mysqli',
 	'dbprefix' => 'pt_',
 	'pconnect' => FALSE,
-	'db_debug' => (ENVIRONMENT !== 'production'),
-	'cache_on' => FALSE,
-	'cachedir' => '',
-	'char_set' => 'utf8',
-	'dbcollat' => 'utf8_general_ci',
-	'swap_pre' => '',
-	'encrypt' => FALSE,
-	'compress' => FALSE,
-	'stricton' => FALSE,
-	'failover' => array(),
-	'save_queries' => TRUE
+	'db_debug' => getenv('DB_DEBUG') ?: (ENVIRONMENT !== 'production'),
+	'cache_on' => getenv('DB_CACHE_ON') ?: FALSE,
+	'cachedir' => getenv('DB_CACHE_DIR') ?: '',
+	'char_set' => getenv('DB_CHAR_SET') ?: 'utf8',
+	'dbcollat' => getenv('DB_COLLATION') ?: 'utf8_general_ci',
+	'swap_pre' => getenv('DB_SWAP_PRE') ?: '',
+	'encrypt' => getenv('DB_ENCRYPT') ?: FALSE,
+	'compress' => getenv('DB_COMPRESS') ?: FALSE,
+	'stricton' => getenv('DB_STRICT_ON') ?: FALSE,
+	'failover' => json_decode(getenv('DB_FAILOVER') ?: '{}', true) ?: array(),
+	'save_queries' => getenv('DB_SAVE_QUERIES') ?: TRUE
 );

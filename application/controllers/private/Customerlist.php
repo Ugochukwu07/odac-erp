@@ -36,6 +36,9 @@ protected function getRecordsFromDb( $post , $limit = null , $start = null, $is_
             $like = null;
             $likekey = null;
             $likeaction = null; 
+            $join = null;
+            $groupby = null;
+            $in_not_in = null;
 		    
             
             $select = "DATE_FORMAT(add_date,'%d-%b-%Y') as add_date,id,uniqueid,fullname,emailid,mobileno,status"; 
@@ -73,7 +76,7 @@ protected function getRecordsFromDb( $post , $limit = null , $start = null, $is_
     $get = $this->input->get(); 
     $post = array_merge($get,$post);
     
-    $pageno = (int)( $post['start'] == 0 ? 1 : $post['length'] + 1 ); 
+    //$pageno = (int)( $post['start'] == 0 ? 1 : $post['length'] + 1 ); 
     $is_count = !empty($post['is_count']) ? $post['is_count'] : '';
     $totalRecords = !empty($post['recordstotal']) ? $post['recordstotal'] : 0; 
   
@@ -100,15 +103,16 @@ protected function getRecordsFromDb( $post , $limit = null , $start = null, $is_
 	}
     
 	$json_data = array();
+    $draw = isset($_REQUEST['draw']) ? intval($_REQUEST['draw']) : 0;
 
 	if( !empty($_REQUEST['search']['value']) ) { 
 		$countItems = !empty($result) ? count( $result ) : 0; 
-		$json_data['draw'] = intval( $_REQUEST['draw'] );
+		$json_data['draw'] = $draw;
 		$json_data['recordsTotal'] = intval( $countItems );
 		$json_data['recordsFiltered'] =  intval( $countItems );
 		$json_data['data'] = !empty($result) ? $result : [];  
 	}else{ 
-		$json_data['draw'] = intval( $_REQUEST['draw'] );
+		$json_data['draw'] = $draw;
 		$json_data['recordsTotal'] = intval($totalRecords );
 		$json_data['recordsFiltered'] =  intval($totalRecords);
 		$json_data['data'] = !empty($result) ? $result : [];  

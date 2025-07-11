@@ -1,0 +1,9 @@
+{
+    "name": "odeac/main",
+    "description": "Odeac Project",
+    "type": "project",
+    "require": {
+        "vlucas/phpdotenv": "^5.0"
+    },
+    "license": "proprietary"
+}

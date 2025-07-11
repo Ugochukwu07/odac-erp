@@ -1,5 +1,9 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * @property CI_Session $session
+ * @property CI_Input $input
+ */
 class Welcome extends CI_Controller{
 	
 	public function __construct(){
@@ -33,7 +37,7 @@ class Welcome extends CI_Controller{
         $cityurl = API_PATH.('api/citylist');
      	$citylist = curl_apis($cityurl,'GET');
      	$data['citylist'] = array();
-     	if($citylist['status']){
+     	if(isset($citylist['status']) && $citylist['status']){
      		$data['citylist'] = $citylist['list'];
      	}
 
@@ -46,7 +50,7 @@ class Welcome extends CI_Controller{
 
      	$bikelist = curl_apis($bikeurl,'POST',$bikepost);
      	$data['bikelist'] = array();
-     	if($bikelist['status']){
+     	if(isset($bikelist['status']) && $bikelist['status']){
      		$data['bikelist'] = $bikelist['list'];
      	}
 
@@ -59,7 +63,7 @@ class Welcome extends CI_Controller{
 
      	$selfdrivelist = curl_apis($selfdriveurl,'POST',$selfpost);
      	$data['selfdrivelist'] = array();
-     	if($selfdrivelist['status']){
+     	if(isset($selfdrivelist['status']) && $selfdrivelist['status']){
      		$data['selfdrivelist'] = $selfdrivelist['list'];
      	}
      	
@@ -72,7 +76,7 @@ class Welcome extends CI_Controller{
 
         $aboutlist = curl_apis($abouturl,'POST',$aboutpost); 
         $data['aboutuscontent'] = false;
-        if($aboutlist['status']){
+        if(isset($aboutlist['status']) && $aboutlist['status']){
             $data['aboutuscontent'] = $aboutlist['data']['content']; 
             $data['metadescription'] = $aboutlist['data']['metadescription'];
             $data['metasummary'] = $aboutlist['data']['summary'];

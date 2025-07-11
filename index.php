@@ -37,6 +37,20 @@
  */
 
 /*
+ * --------------------------------------------------------------------
+ * LOAD THE DOTENV FILE
+ * --------------------------------------------------------------------
+ *
+ * We use the Dotenv library to load configuration from a .env file.
+ */
+require_once __DIR__ . '/vendor/autoload.php';
+if (file_exists(__DIR__ . '/.env')) {
+    $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__);
+    $dotenv->load();
+}
+
+
+/*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
  *---------------------------------------------------------------

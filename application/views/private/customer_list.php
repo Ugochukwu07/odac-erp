@@ -418,10 +418,9 @@ function action_render(data, type, row, meta){
     
     let output = '';
     if(type === 'display'){ 
-      
         output += '<div style="width:88px">' ;
         if( editMode == 'yes' ){
-        //output += '<a href="<?=adminurl('add_veh_details')?>/?id='+row.enc_id+'&redirect=total" class="btn btn-sm btn-info" data-toggle="tooltip" title="Edit" ><i class="fa fa-edit"></i></a> | ';
+        output += '<a href="<?=adminurl('add_veh_details')?>/?id='+row.enc_id+'&redirect=total" class="btn btn-sm btn-info" data-toggle="tooltip" title="Edit" ><i class="fa fa-edit"></i></a> | ';
         }  
         
         output += '</div>'; 
