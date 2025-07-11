@@ -1,5 +1,6 @@
 
-    <script src="<?php echo PEADEX;?>assets/cli/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script src="<?php echo PEADEX;?>assets/cli/js/jquery-1.12.0.js" type="text/javascript"></script>
+    <script src="<?php echo PEADEX;?>assets/cli/js/bootstrap.min.js" type="text/javascript"></script>
 <script src="<?php echo PEADEX;?>assets/cli/js/custom.js" type="text/javascript"></script>
 <script src="<?php echo PEADEX;?>assets/cli/js/datetimepicker.js" type="text/javascript"></script>
 
