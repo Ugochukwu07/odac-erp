@@ -14,7 +14,7 @@
 
           <?php if ($tab == 'selfdrive' || $tab == ''): ?>
             <!-- Self Drive Car Form -->
-            <?php echo form_open_multipart(PEADEX . 'reservation.html'); ?>
+            <?php echo form_open_multipart(adminurl('makebooking/reservation'), ['method' => 'get'] ); ?>
             <input type="hidden" name="tabdata" value="selfdrive" />
 
             <div class="row">
@@ -59,7 +59,7 @@
 
           <?php elseif ($tab == 'outstation'): ?>
             <!-- Outstation/Taxi Service Form -->
-            <?php echo form_open_multipart(PEADEX . 'reservation.html'); ?>
+            <?php echo form_open_multipart(adminurl('makebooking/reservation'), ['method' => 'get']); ?>
             <input type="hidden" name="tabdata" value="outstation" />
 
             <div class="row my-4">
@@ -121,7 +121,7 @@
 
           <?php elseif ($tab == 'bike'): ?>
             <!-- Bike Rental Form -->
-            <?php echo form_open_multipart(PEADEX . 'reservation.html'); ?>
+            <?php echo form_open_multipart(adminurl('makebooking/reservation'), ['method' => 'get']); ?>
             <input type="hidden" name="tabdata" value="bike" />
 
             <div class="row">
@@ -166,7 +166,7 @@
 
           <?php elseif ($tab == 'monthly'): ?>
             <!-- Monthly Rental Form -->
-            <?php echo form_open_multipart(PEADEX . 'reservation.html'); ?>
+            <?php echo form_open_multipart(adminurl('makebooking/reservation'), ['method' => 'get']); ?>
             <input type="hidden" name="tabdata" value="monthly" />
 
             <div class="row">
@@ -211,7 +211,7 @@
 
           <?php else: ?>
             <!-- Default Form (if no tab specified) -->
-            <?php echo form_open_multipart(PEADEX . 'reservation.html'); ?>
+            <?php echo form_open_multipart(adminurl('makebooking/reservation'), ['method' => 'get']); ?>
             <div class="row">
               <div class="col-lg-6 mb-3">
                 <?php echo form_label('I want a Car in', 'cityname'); ?>
