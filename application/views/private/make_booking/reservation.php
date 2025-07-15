@@ -117,26 +117,137 @@ defined('BASEPATH') or exit('No direct script access allowed');  ?>
                 </div>
             </div>
         </div>
+    </div>
 </section>
 
+<!-- Test button for debugging -->
+<div class="text-center mt-3">
+    <button type="button" class="btn btn-info" onclick="testModal()">Test Modal</button>
+</div>
+
+<!-- Modal moved outside main content to avoid z-index conflicts -->
+<div class="modal fade" id="fareshow" tabindex="-1" aria-labelledby="fareModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fareModalLabel">Fare Breakdown</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="fareSummary">
+                    <!-- Fare details will be loaded here -->
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xs-12">
+                        <p class='ext_txt'><br /><b class="bold">Extra Charges (if applicable)</b></p>
+                    </div>
+                </div>
+                <?php echo '<div class="lists-inline tnc"> ' . $termslist . ' </div>'; ?>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /. Fare modal-content end -->
+
 <script type="text/javascript">
-    function bookinglink(goparam) {
-        window.location.href = '<?php echo PEADEX; ?>login/dologin?utm=' + btoa(goparam);
+    // Wait for jQuery to be available
+    function waitForJQuery(callback) {
+        if (typeof jQuery !== 'undefined') {
+            callback();
+        } else {
+            setTimeout(function() {
+                waitForJQuery(callback);
+            }, 100);
+        }
     }
 
-    function showfare(req) {
-        $.ajax({
-            type: 'POST',
-            url: '<?php echo PEADEX; ?>Fb/index',
-            data: {
-                'vall': req
-            },
-            success: function(res) {
-                $("#fareSummary").html(res);
-                $("#fareshow").modal('show');
-            }
-        })
-    }
+    waitForJQuery(function() {
+        // Now jQuery is available
+        console.log('jQuery is loaded, version:', $.fn.jquery);
+        
+        function bookinglink(goparam) {
+            window.location.href = '<?php echo PEADEX; ?>login/dologin?utm=' + btoa(goparam);
+        }
+
+        function showfare(req) {
+            console.log('showfare called with:', req);
+            
+            // Show loading state first
+            $("#fareSummary").html('<div class="text-center"><i class="fa fa-spinner fa-spin"></i> Loading fare details...</div>');
+            
+            // Bootstrap 5 modal initialization
+            const modalElement = document.getElementById('fareshow');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+            
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo PEADEX; ?>Fb/index',
+                data: {
+                    'vall': req
+                },
+                dataType: 'html',
+                timeout: 10000,
+                success: function(res) {
+                    console.log('AJAX success, response length:', res.length);
+                    if (res && res.trim() !== '') {
+                        $("#fareSummary").html(res);
+                    } else {
+                        $("#fareSummary").html('<div class="alert alert-warning">No fare details available for this vehicle.</div>');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', status, error);
+                    console.error('Response:', xhr.responseText);
+                    $("#fareSummary").html('<div class="alert alert-danger">Error loading fare details. Please try again later.</div>');
+                }
+            });
+        }
+
+        function testModal() {
+            console.log('Test modal function called');
+            console.log('Modal element exists:', $('#fareshow').length);
+            
+            $("#fareSummary").html('<div class="alert alert-info">This is a test modal content</div>');
+            
+            // Bootstrap 5 modal initialization
+            const modalElement = document.getElementById('fareshow');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+
+        // Debug modal events - Bootstrap 5 syntax
+        $(document).ready(function() {
+            console.log('Document ready, setting up modal events');
+            
+            const modalElement = document.getElementById('fareshow');
+            
+            modalElement.addEventListener('show.bs.modal', function () {
+                console.log('Modal show event triggered');
+            });
+            
+            modalElement.addEventListener('shown.bs.modal', function () {
+                console.log('Modal shown event triggered');
+                // Force z-index after modal is shown
+                $(this).css('z-index', '9999');
+                $('.modal-backdrop').css('z-index', '9998');
+            });
+            
+            modalElement.addEventListener('hide.bs.modal', function () {
+                console.log('Modal hide event triggered');
+            });
+            
+            // Test if modal can be shown manually
+            modalElement.addEventListener('click', function() {
+                console.log('Modal clicked');
+            });
+        });
+
+        // Make functions globally available
+        window.bookinglink = bookinglink;
+        window.showfare = showfare;
+        window.testModal = testModal;
+    });
 
     <?php $termslist = '';
     if (!empty($terms)) {
@@ -179,27 +290,57 @@ defined('BASEPATH') or exit('No direct script access allowed');  ?>
         pointer-events: none;
         opacity: 0.4;
     }
-</style>
-<!-- /. Fare modal-content -->
-<div class="modal fade" tabindex="1" role="dialog" id="fareshow">
-    <div class="modal-dialog text-center">
-        <div class="modal-content">
-            <div class="modal-header">
 
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <span class="modal-title">
-                    <div class="fwidth">
-                        <span id="fareSummary"></span>
-                        <div class="row">
-                            <div class="col-lg-12 col-xs-12">
-                                <p class='ext_txt'><br /><b class="bold">Extra Charges (if applicable)</b></p>
-                            </div>
-                        </div>
-                        <?php echo '<div class="lists-inline tnc"> ' . $termslist . ' </div>'; ?>
-                    </div>
-            </div>
-        </div>
-    </div>
-    </span>
-</div><!-- /.modal-content -->
-<!-- /. Fare modal-content start -->
+    /* Fix modal z-index issues */
+    .modal {
+        z-index: 9999 !important;
+        position: fixed !important;
+    }
+    
+    .modal-backdrop {
+        z-index: 9998 !important;
+    }
+    
+    .modal-dialog {
+        z-index: 10000 !important;
+        position: relative !important;
+    }
+    
+    /* Ensure modal content is above backdrop */
+    .modal-content {
+        position: relative !important;
+        z-index: 10001 !important;
+    }
+    
+    /* Override any conflicting z-index from admin theme */
+    .content-wrapper .modal {
+        z-index: 9999 !important;
+    }
+    
+    .sidebar-overlay {
+        z-index: 1010 !important;
+    }
+    
+    /* Force modal to be on top of everything */
+    #fareshow {
+        z-index: 9999 !important;
+    }
+    
+    #fareshow .modal-dialog {
+        z-index: 10000 !important;
+    }
+    
+    #fareshow .modal-content {
+        z-index: 10001 !important;
+    }
+    
+    /* Ensure body doesn't interfere */
+    body.modal-open {
+        overflow: hidden !important;
+    }
+    
+    /* Override any admin theme modal styles */
+    .skin-blue .modal {
+        z-index: 9999 !important;
+    }
+</style>
