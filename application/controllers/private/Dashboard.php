@@ -5,7 +5,6 @@ class Dashboard extends CI_Controller{
 	  function __construct() {
          parent::__construct(); 
 	     adminlogincheck();
-		 $this->load->model('Common_model', 'c_model');
       }
 	
 	public function index(){ 
@@ -81,10 +80,6 @@ class Dashboard extends CI_Controller{
 		$where12['DATE(dropdatetime) <'] = DATE('Y-m-d');
 		$where12['vehicleno !='] = '';
 		$data['holdbooking'] = $this->c_model->countitem($table,$where12,null,null, 'id' );
-
-		/**total business*/
-		$totalbusiness = $this->db->query("select SUM(totalamount) AS total from pt_booking where attemptstatus NOT IN('cancel','reject')")->row_array();
-		$data['totalbusiness'] = !empty($totalbusiness) ? $totalbusiness['total'] : 0;
 
 		/**total business*/
 		$tbus = $this->db->query("select SUM(totalamount) AS total from pt_booking where attemptstatus NOT IN('cancel','reject') AND DATE(pickupdatetime) >='".date('Y-m-01')."' AND DATE(dropdatetime) <='".date('Y-m-d')."'  ")->row_array();

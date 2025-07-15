@@ -403,24 +403,33 @@ class Common_model extends CI_Model
 
 	public function countitem($table, $where = null, $whereor = null, $whereorkey = null, $keys = null)
 	{
+		$this->db->select("COUNT(*) AS `count`");
 
-		if (!empty($keys)) {
-			$this->db->select($keys);
+		if (!is_null($where)) {
+			$this->db->where($where);
 		}
-		if (!empty($where)) {
-			$query = $this->db->where($where);
-			if (!is_null($whereor)) {
-				$query = $this->db->group_start();
-				foreach ($whereor as $row) {
-					$query = $this->db->or_where($whereorkey, $row);
-				}
-				$query = $this->db->group_end();
+
+		if (!is_null($whereor) && !is_null($whereorkey)) {
+			$this->db->group_start();
+			foreach ($whereor as $row) {
+				$this->db->or_where($whereorkey, $row);
 			}
-			$query = $this->db->get($table);
-		} else {
-			$query = $this->db->get($table);
+			$this->db->group_end();
 		}
-		$count = $query->num_rows();
-		return ($count > 0 ? $count : 0);
+
+		$query = $this->db->get($table);
+		$result = $query->row_array();
+		return $result['count'];
+	}
+
+	public function getSum($table, $field, $where = null)
+	{
+		$this->db->select_sum($field);
+		if (!is_null($where)) {
+			$this->db->where($where);
+		}
+		$query = $this->db->get($table);
+		$result = $query->row_array();
+		return $result[$field] ? $result[$field] : 0;
 	}
 }

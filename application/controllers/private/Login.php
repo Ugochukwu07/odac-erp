@@ -1,5 +1,12 @@
-<?php defined('BASEPATH') or exit('No direct script access allowed');
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * @property CI_Form_validation $form_validation
+ * @property CI_Input $input
+ * @property CI_Session $session
+ * @property CI_Security $security
+ * @property Common_model $c_model
+ */
 class Login extends CI_Controller
 {
 
@@ -58,7 +65,7 @@ class Login extends CI_Controller
 				$session_data['permissions'] = $permissions; // Store permission IDs in session
 
 				$this->session->set_userdata('adminloginstatus', $session_data);
-
+				log_activity('login', 'User logged in successfully.');
 				redirect(adminfold('Changedomain'));
 			} else {
 				$this->session->set_flashdata('error', 'Invalid Login Details.');
@@ -119,5 +126,13 @@ class Login extends CI_Controller
 		}
 
 		return $permissions;
+	}
+
+	public function logout()
+	{
+		log_activity('logout', 'User logged out.');
+		$this->session->unset_userdata('adminloginstatus');
+		$this->session->set_flashdata('success', 'You are logged out Successfully.');
+		redirect(adminurl('login'));
 	}
 }

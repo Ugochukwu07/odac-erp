@@ -5,6 +5,7 @@ class Addcity extends CI_Controller{
 	 function __construct() {
          parent::__construct();   
 	     adminlogincheck();
+         $this->load->model('Common_model', 'c_model');
      }	
 
 
@@ -98,12 +99,16 @@ class Addcity extends CI_Controller{
 		
 		
 		if( $id && $spost['stateid']){ 
-		$ststus = $this->c_model->saveupdate( $table, $spost, NULL, $postwhere, NULL );	
+		$ststus = $this->c_model->saveupdate( $table, $spost, NULL, $postwhere, NULL );
+        log_activity('city_updated', 'Updated city: ' . $spost['cityname'], $id, $table);
 	    $this->session->set_flashdata('success',"Your data has been updated successfully!");
 		redirect( adminurl( $currentpage.'/?id='.$id));
 		
 		}else if( empty($checkitem) && empty($id) && $spost['stateid'] ){
 		$ststus = $this->c_model->saveupdate( $table, $spost);
+        if($ststus) {
+            log_activity('city_added', 'Added new city: ' . $spost['cityname'], $ststus, $table);
+        }
 		$this->session->set_flashdata('success',"Your data has been added successfully!");
 		redirect( adminurl( $currentpage ));
 		  
@@ -128,6 +133,10 @@ class Addcity extends CI_Controller{
    public function deletecity(){
 
       if( $id = $this->input->get('delId') ){
+        $city = $this->c_model->getSingle('city', array('md5(id)'=>$id));
+        if ($city) {
+            log_activity('city_deleted', 'Deleted city: ' . $city['cityname'], $city['id'], 'city');
+        }
       	$this->c_model->delete('city',array('md5(id)'=>$id));
       	$this->session->set_flashdata('error',"City deleted successfully!");
       	redirect( adminurl('viewcity') );

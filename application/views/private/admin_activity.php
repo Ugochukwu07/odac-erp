@@ -129,6 +129,11 @@
                                   onclick="viewUserActivity('<?php echo $user['mobile']; ?>', '<?php echo htmlspecialchars($user['name']); ?>')">
                             <i class="fa fa-history"></i> View Activity
                           </button>
+                          <br><br>
+                          <button type="button" class="btn btn-sm btn-warning" 
+                                  onclick="viewGeneralActivity('<?php echo $user['mobile']; ?>', '<?php echo htmlspecialchars($user['name']); ?>')">
+                            <i class="fa fa-list"></i> General Activity
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -178,6 +183,25 @@
       </div>
       <div class="modal-body">
         <div id="userActivityContent">
+          <div class="text-center">
+            <i class="fa fa-spinner fa-spin fa-2x"></i> Loading...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal for General Activity -->
+<div class="modal fade" id="generalActivityModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close btn btn-danger" onclick="closeModal('generalActivityModal')">&times;</button>
+        <h4 class="modal-title">General Activity - <span id="generalActivityName"></span></h4>
+      </div>
+      <div class="modal-body">
+        <div id="generalActivityContent">
           <div class="text-center">
             <i class="fa fa-spinner fa-spin fa-2x"></i> Loading...
           </div>
@@ -377,6 +401,61 @@ function displayUserActivity(activities, editLogs) {
     }
     
     $('#userActivityContent').html(html);
+}
+
+function viewGeneralActivity(mobile, name) {
+    $('#generalActivityName').text(name);
+    $('#generalActivityModal').modal('show');
+
+    var dateFrom = $('#dateFrom').val();
+    var dateTo = $('#dateTo').val();
+
+    $.ajax({
+        url: '<?php echo adminurl("AdminActivity/getGeneralActivity"); ?>',
+        type: 'GET',
+        data: {
+            mobile: mobile,
+            from: dateFrom,
+            to: dateTo
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                displayGeneralActivity(response.activities);
+            } else {
+                $('#generalActivityContent').html('<div class="alert alert-danger">' + response.error + '</div>');
+            }
+        },
+        error: function() {
+            $('#generalActivityContent').html('<div class="alert alert-danger">Error loading general activity</div>');
+        }
+    });
+}
+
+function displayGeneralActivity(activities) {
+    var html = '';
+
+    if (activities.length === 0) {
+        html = '<div class="alert alert-info">No general activity found for this user in the selected period.</div>';
+    } else {
+        html = '<table class="table table-bordered table-striped">';
+        html += '<thead><tr><th>ID</th><th>Activity Type</th><th>Description</th><th>IP Address</th><th>Date</th></tr></thead>';
+        html += '<tbody>';
+
+        activities.forEach(function(activity) {
+            html += '<tr>';
+            html += '<td>' + activity.id + '</td>';
+            html += '<td>' + activity.activity_type + '</td>';
+            html += '<td>' + activity.activity_description + '</td>';
+            html += '<td>' + activity.ip_address + '</td>';
+            html += '<td>' + activity.created_at + '</td>';
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+    }
+
+    $('#generalActivityContent').html(html);
 }
 
 function getStatusClass(status) {

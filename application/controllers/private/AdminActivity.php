@@ -1,5 +1,11 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * @property CI_Session $session
+ * @property CI_Input $input
+ * @property CI_DB_query_builder $db
+ * @property Common_model $c_model
+ */
 class AdminActivity extends CI_Controller {
     
     function __construct() {
@@ -227,5 +233,41 @@ class AdminActivity extends CI_Controller {
         }
         
         echo json_encode(['success' => true, 'summary' => $summary]);
+    }
+
+
+    public function getGeneralActivity() {
+        $user_mobile = $this->input->get('mobile');
+        $date_from = $this->input->get('from');
+        $date_to = $this->input->get('to');
+        
+        if (empty($user_mobile)) {
+            echo json_encode(['error' => 'User mobile is required']);
+            return;
+        }
+        
+        // Check if current user can track this user
+        $target_user = $this->c_model->getSingle('users', ['mobile' => $user_mobile], 'id');
+        if (!$target_user) {
+            echo json_encode(['error' => 'User not found']);
+            return;
+        }
+
+        if (!can_track_user_bookings($target_user['id'])) {
+            echo json_encode(['error' => 'You do not have permission to track this user']);
+            return;
+        }
+        
+        // Get user's general activity
+        $where = ['admin_mobile' => $user_mobile];
+        
+        if (!empty($date_from) && !empty($date_to)) {
+            $where['DATE(created_at) >='] = $date_from;
+            $where['DATE(created_at) <='] = $date_to;
+        }
+        
+        $activities = $this->c_model->getAll('pt_admin_activity_log', $where, null, '*', 'created_at DESC', null, 100);
+        
+        echo json_encode(['success' => true, 'activities' => $activities]);
     }
 } 

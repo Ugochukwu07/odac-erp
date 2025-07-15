@@ -6,6 +6,7 @@ class Add_company extends CI_Controller{
 	 function __construct() {
          parent::__construct();   
 	     adminlogincheck();
+	     $this->load->model('Common_model', 'c_model');
 	     $this->pagename = 'Add_company';
 	     $this->table = 'pt_insurance_company';
      }	
@@ -13,11 +14,11 @@ class Add_company extends CI_Controller{
 
   public function index() { 
 
-  	/*check domain start*/
-    if(  !checkdomain() ){
-  		redirect( adminurl('Changedomain?return='.$currentpage ) );
+    /*
+  	if(  !checkdomain() ){
+  		redirect( adminurl('Changedomain?return='.$this->pagename ) );
   	}
-  	/*check domain end*/ 
+    */
 
 	$data['posturl'] = adminurl($this->pagename ).'/savedata';
 
@@ -41,7 +42,6 @@ class Add_company extends CI_Controller{
             $data['status'] = $old_dta['status']; 
 	}  
 	 
-	$data['redirect'] = $redirect;
  
 	  _view( strtolower($this->pagename) , $data );
 	  
@@ -78,10 +78,12 @@ class Add_company extends CI_Controller{
 		
 		
 		if( $update && $id ){
+            log_activity('company_updated', 'Updated company: ' . $sdata['company_name'], $id, $this->table);
     		$this->session->set_flashdata('success',"Data updated successfully!");
     		redirect( adminurl( $this->pagename.'/?id='.md5($id)));
 		
 		}else if( $update && !$id){ 
+            log_activity('company_added', 'Added new company: ' . $sdata['company_name'], $update, $this->table);
     		$this->session->set_flashdata('success',"Data Added successfully!");
     		redirect( adminurl( $this->pagename )) ;
 		  

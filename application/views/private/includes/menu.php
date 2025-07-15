@@ -68,16 +68,18 @@ if($user_type == 'admin'){
 $user_menu_ids = $menu_ids_list;
 }
 
-function get_parent_id_s($listdata,$id){ 
-    $collect_id = '';
-    foreach ($listdata as $key => $value) {
-       if($value['id']==$id && $value['parent_id']!= 0 ){
-          $collect_id = $value['parent_id']; 
-              break;          
-       }
-    }
-    return $collect_id;
-} 
+if(!function_exists('get_parent_id_s')){
+    function get_parent_id_s($listdata,$id){ 
+        $collect_id = '';
+        foreach ($listdata as $key => $value) {
+           if($value['id']==$id && $value['parent_id']!= 0 ){
+              $collect_id = $value['parent_id']; 
+                  break;          
+           }
+        }
+        return $collect_id;
+    } 
+}
 
 ?>
 

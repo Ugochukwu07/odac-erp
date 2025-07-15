@@ -5,6 +5,11 @@ class Addvehicle extends CI_Controller{
 	 function __construct() {
          parent::__construct();   
 	     adminlogincheck();
+         $this->load->model('Common_model', 'c_model');
+         $this->load->library('form_validation');
+         $this->load->library('session');
+         $this->load->library('upload');
+         $this->load->library('image_lib');
      }	
 
 
@@ -130,12 +135,16 @@ class Addvehicle extends CI_Controller{
 		
 		
 		if( $id ){
-		$status = $this->c_model->saveupdate( $table, $spost, NULL, $postwhere, NULL );	
+		$status = $this->c_model->saveupdate( $table, $spost, NULL, $postwhere, NULL );
+        log_activity('vehicle_model_updated', 'Updated vehicle model: ' . $spost['model'], $id, $table);
 		$this->session->set_flashdata('success',"Data updated successfully!");
 		redirect( adminurl( $currentpage.'/?id='.$id));
 		
 		}else if( empty($checkitem) && empty($id)){
 		$status = $this->c_model->saveupdate( $table, $spost, NULL, NULL, NULL );
+        if($status) {
+            log_activity('vehicle_model_added', 'Added new vehicle model: ' . $spost['model'], $status, $table);
+        }
 		$this->session->set_flashdata('success',"Data added successfully!");
 		redirect( adminurl( $currentpage )) ;
 		  

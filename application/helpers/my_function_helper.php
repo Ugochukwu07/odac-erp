@@ -1221,3 +1221,31 @@ if(!function_exists('incomeSorting')){
 	}
 }
 
+
+if (!function_exists('log_activity')) {
+    function log_activity($type, $description, $target_id = null, $target_table = null) {
+        $CI =& get_instance();
+        $CI->load->database();
+
+        $admin_data = $CI->session->userdata('adminloginstatus');
+        $admin_id = isset($admin_data['logindata']['id']) ? $admin_data['logindata']['id'] : 0;
+        $admin_name = isset($admin_data['logindata']['fullname']) ? $admin_data['logindata']['fullname'] : 'System';
+        $admin_mobile = isset($admin_data['logindata']['mobile']) ? $admin_data['logindata']['mobile'] : 'N/A';
+        
+        $ip_address = $CI->input->ip_address();
+
+        $data = array(
+            'admin_id' => $admin_id,
+            'admin_name' => $admin_name,
+            'admin_mobile' => $admin_mobile,
+            'activity_type' => $type,
+            'activity_description' => $description,
+            'target_id' => $target_id,
+            'target_table' => $target_table,
+            'ip_address' => $ip_address,
+        );
+
+        $CI->db->insert('pt_admin_activity_log', $data);
+    }
+}
+
