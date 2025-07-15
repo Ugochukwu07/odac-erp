@@ -1,5 +1,10 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 
+/**
+ * @property CI_Session $session
+ * @property CI_Input $input
+ * @property Common_model $c_model
+ */
 class Makebooking extends CI_Controller
 {
 
@@ -7,6 +12,7 @@ class Makebooking extends CI_Controller
    {
       parent::__construct();
       adminlogincheck();
+      $this->load->model('Common_model', 'c_model');
    }
 
 
@@ -59,7 +65,14 @@ class Makebooking extends CI_Controller
          $this->session->set_userdata('adminbooking', $post);
 
 
-         redirect(PEADEX);
+         // $booking = [];
+
+         // if ($return = $this->session->userdata('adminbooking')) {
+         //    $data['c_uid'] = $return['c_uid'];
+         // }
+
+         // _view('makebooking_car', $data);
+         redirect(PEADEX . 'private/makebooking/bookCar');
       }
 
 
@@ -86,11 +99,41 @@ class Makebooking extends CI_Controller
          $data['c_discount'] = $return['c_discount'];
       }
 
-
-
       _view('makebooking', $data);
    }
 
+   public function bookCar() {
+      $data = [];
+
+      $data['fullname'] = "Hello";
+      $data['cityname'] = '';
+      $data['destinationCity'] = '';
+      $data['pickdatetime'] = date('Y-m-d\TH:i', strtotime('+90 minutes'));
+      $data['dropdatetime'] = date('Y-m-d\TH:i', strtotime('+90 minutes'));
+      $data['dropmontlydatetime'] = date('Y-m-d\TH:i', strtotime(date('Y-m-d H:i:s', strtotime($data['pickdatetime'])) . ' +30 days'));
+      
+      $session = $this->session->userdata('adminbooking');
+      if ($session) {
+         $data['tab'] = $session['c_trip'];
+         $data['cityname'] = isset($session['sourcecity']) ? $session['sourcecity'] : '';
+         $data['destinationCity'] = isset($session['destinationCity']) ? $session['destinationCity'] : '';
+         $data['pickdatetime'] = isset($session['pickdatetime']) ? $session['pickdatetime'] : $data['pickdatetime'];
+         $data['dropdatetime'] = isset($session['dropdatetime']) ? $session['dropdatetime'] : $data['dropdatetime'];
+         $data['dropmontlydatetime'] = isset($session['dropmontlydatetime']) ? $session['dropmontlydatetime'] : $data['dropmontlydatetime'];
+      } else {
+         $data['tab'] = 'selfdrive'; // Default tab
+      }
+
+      /* citylist code */
+      $cityurl = API_PATH . ('api/citylist');
+      $citylist = curl_apis($cityurl, 'GET');
+      $data['citylist'] = array();
+      if (isset($citylist['status']) && $citylist['status']) {
+         $data['citylist'] = $citylist['list'];
+      }
+
+      _view('makebooking_car', $data);
+   }
 
 
    public function getdetails()
