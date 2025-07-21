@@ -158,13 +158,19 @@ class Common_model extends CI_Model
 	}
 
 	/**
-	 * Insert a new record into the specified table
+	 * Insert new records into the specified table
 	 * @param string $table Table name
 	 * @param array $dataarray Data to insert
 	 * @return int|bool Insert ID on success, false on failure
 	 */
 	public function insert($table, $dataarray)
 	{
+		// Check if the table is pt_urlsortner and uid is not set
+		if ($table === 'pt_urlsortner' && !isset($dataarray['uid'])) {
+			// Generate a unique ID for the uid field
+			$dataarray['uid'] = date('YmdHis') . rand(100, 999);
+		}
+		
 		$this->db->insert($table, $dataarray);
 		return $this->db->insert_id();
 	}
@@ -182,6 +188,15 @@ class Common_model extends CI_Model
 	}
 
 
+	/**
+	 * Save or update records in the specified table
+	 * @param string $table Table name
+	 * @param array $dataarray Data to save/update
+	 * @param array $validation Validation conditions
+	 * @param array $where Where conditions for update
+	 * @param mixed $id ID to return on success
+	 * @return mixed Insert ID, update status, or specified ID
+	 */
 	public function saveupdate($table, $dataarray, $validation = null, $where = null, $id = null)
 	{
 
@@ -197,6 +212,12 @@ class Common_model extends CI_Model
 			if (!is_null($validation) && $this->db->get($table)->num_rows() > 0) {
 				return false;
 			} else {
+				// Check if the table is pt_urlsortner and uid is not set
+				if ($table === 'pt_urlsortner' && !isset($dataarray['uid'])) {
+					// Generate a unique ID for the uid field
+					$dataarray['uid'] = date('YmdHis') . rand(100, 999);
+				}
+				
 				$this->db->insert($table, $dataarray);
 				return $this->db->insert_id();
 			}

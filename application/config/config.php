@@ -595,7 +595,7 @@ if (!defined('FCC')) define('FCC', '');
 if (!defined('FHOST')) define('FHOST', '');
 if (!defined('FSERVERUSER')) define('FSERVERUSER', '');
 if (!defined('FPASSWORD')) define('FPASSWORD', '');
-if (!defined('CABGST')) define('CABGST', '');
+if (!defined('CABGST')) define('CABGST', 1);
 if (!defined('CABADVNCE')) define('CABADVNCE', '');
 if (!defined('ONLINECHARGE')) define('ONLINECHARGE', '');
 if (!defined('SLIPCOLOR')) define('SLIPCOLOR', '');

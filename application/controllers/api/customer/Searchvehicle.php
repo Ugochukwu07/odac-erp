@@ -257,6 +257,8 @@ class Searchvehicle extends CI_Controller{
         if(empty($data)){
             $response['status'] = FALSE;  
             $response['message'] = 'No cab available on this date for this trip!';  
+			var_dump($response);
+			die();
             echo json_encode($response);
             exit;
         }
@@ -275,7 +277,9 @@ class Searchvehicle extends CI_Controller{
         $response['status'] = true;
         $response['data'] = $data;
         $response['terms'] = $this->getterms($tab);
-        $response['message'] = 'Success!';  
+        $response['message'] = 'Success!'; 
+		var_dump($response);
+		die();
  	    echo json_encode($response);
 	
 }

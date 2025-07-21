@@ -94,7 +94,7 @@ defined('VIEW')        OR define('VIEW', 'yes');
 defined('EDIT')        OR define('EDIT', 'yes');  
 defined('REMOVE')        OR define('REMOVE', 'yes');
 defined('DOMAINID')        OR define('DOMAINID', '2');
-defined('API_PATH')        OR define('API_PATH', 'https://www.odac24.in/');
+defined('API_PATH')        OR define('API_PATH', isset($_ENV['API_PATH']) ? $_ENV['API_PATH'] : 'https://www.odac24.in/');
    
 
 defined('PAYUSALT')        OR define('PAYUSALT', ''); 

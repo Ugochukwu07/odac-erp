@@ -2,12 +2,28 @@
 
 use Razorpay\Api\Api;
 
-defined('BASEPATH') or exit('No direct script access allowed');  ?>
+defined('BASEPATH') or exit('No direct script access allowed');
+
+// Build terms list for display
+$termslist = '';
+if (!empty($terms)) {
+    $termslist .= '<ol>';
+    foreach ($terms as $key => $valueli) {
+        $termslist .= '<li>' . $valueli['content'] . '</li>';
+    }
+    $termslist .= '</ol>';
+}
+?>
+
 <style>
     <?php
     //invlude reservation.css
     require_once(APPPATH . '../assets/cli/css/modern/reservation.css');
     ?>
+
+.modal-backdrop.fade.show{
+    display: none !important;
+}
 </style>
 
 <section class="content">
@@ -248,16 +264,6 @@ defined('BASEPATH') or exit('No direct script access allowed');  ?>
         window.showfare = showfare;
         window.testModal = testModal;
     });
-
-    <?php $termslist = '';
-    if (!empty($terms)) {
-        $termslist .= '<ol>';
-        foreach ($terms as $key => $valueli) {
-            $termslist .= '<li>' . $valueli['content'] . '</li>';
-        }
-        $termslist .= '</ol>';
-    }
-    ?>
 </script>
 <style type="text/css">
     @media(min-width:780px) {
