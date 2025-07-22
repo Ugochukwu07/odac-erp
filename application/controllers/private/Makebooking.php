@@ -128,7 +128,8 @@ class Makebooking extends CI_Controller
       _view('makebooking_car', $data);
    }
 
-   public function reservation() {
+   public function reservation()
+   {
       //get all query params to $query array
       // $query = $this->input->get();
       // print_r($query);
@@ -244,6 +245,131 @@ class Makebooking extends CI_Controller
       _view('make_booking/reservation', $data);
    }
 
+   public function reservationForm() {
+      $data = [];
+      $getdata = [];
+
+      $post['id'] = NULL;
+      $post['pagetype'] = '';
+      $post['pageurl'] = adminurl('makebooking/reservationForm');
+      $post['domainid'] = DOMAINID;
+      $data['payment_mode'] = 'advance';
+      if ($return = $this->session->userdata('adminbooking')) {
+         $post['domainid'] = $return['domainid'];
+         $data['payment_mode_list'] = ['advance' => 'Advance Payment', 'full' => 'Full Payment', 'cash' => 'Cash'];
+      } else {
+         if (RAZOR_PAY_ENABLE_DISABLE == 'enable') {
+            $data['payment_mode_list'] = ['advance' => 'Advance Payment', 'full' => 'Full Payment'];
+         } else {
+            $data['payment_mode_list'] = ['advance' => 'Advance Payment', 'full' => 'Full Payment', 'cash' => 'Cash'];
+         }
+      }
+      $data['metadescription'] = '';
+      $data['metasummary'] = '';
+      $data['metakeywords'] = '';
+      $data['title'] = '';
+      $data['heading'] = '';
+      $data['description'] = '';
+      $data['result'] = [];
+      $data['place'] = false;
+
+      $post =  $this->input->get('utm');
+      if (!empty($post)) {
+         $reqid = base64_decode($post);
+         $where['id'] = $reqid;
+         $fetch = $reqid ? $this->c_model->getSingle('pt_urlsortner', $where, 'id,payload') : [];
+         if (empty($fetch)) {
+            redirect(adminurl('makebooking'));
+         }
+         $req = $fetch['payload'] ? base64_decode($fetch['payload']) : '';
+         $req = json_decode($req, true);
+         $req['stock'] = $reqid;
+         $data['result'] = $req;
+      } else {
+         redirect(adminurl('makebooking'));
+      }
+
+
+      /*prepare data to load coupon data start*/
+      $cpnw = [];
+      $data['cpnlist'] = [];
+      if (!empty($req)) {
+         $cpnw['triptype'] = $req['triptype'];
+         $cpnw['withgstamount'] = $req['withgstamount'];
+         //print_r( $cpnw); exit;
+         $cpnurl = API_PATH . ('api/customer/coupon/cpnlist');
+         $cpnlist = curl_apis($cpnurl, 'POST', $cpnw);
+
+         if (!empty($cpnlist['status'])) {
+            $data['cpnlist'] = $cpnlist['data'];
+         }
+      }
+      /*prepare data to load coupon data end*/
+      //  echo '<pre>';
+      // print_r( $data['cpnlist'] ); exit;
+
+      /*check if any stored session is active start script*/
+      $data['firstname'] = '';
+      $data['lastname'] = '';
+      $data['emailid'] = '';
+      $data['mobileno'] = '';
+      $data['bookedfrom'] = '';
+      $data['offer'] = '';
+      $data['advance_amount'] = '';
+
+
+      if ($return = $this->session->userdata('adminbooking')) {
+         $data['firstname'] = $return['c_name'];
+         $data['lastname'] = '';
+         $data['emailid'] = $return['c_email'];
+         $data['mobileno'] = $return['c_mobile'];
+         $data['bookedfrom'] = 'admin';
+         $data['offer'] = $return['c_discount'];
+         $data['advance_amount'] = $return['c_ad_amount'];
+      } else if ($return = $this->session->userdata('frontbooking')) {
+         $data['firstname'] = $return['c_name'];
+         $data['lastname'] = '';
+         $data['emailid'] = $return['c_email'];
+         $data['mobileno'] = $return['c_mobile'];
+      }
+      // var_dump($data['result'], $return, $this->session->userdata('adminbooking'));
+      // die;
+
+      /*check if any stored session is active end script*/
+
+      /*get vehicle pickup drop address */
+      $data['pickupdropaddress'] = '';
+      $cityData = !empty($req) ? $this->c_model->getSingle('pt_city', ['id' => $req['fromcity']], 'id,pickupdropaddress') : [];
+      if (!empty($cityData)) {
+         $data['pickupdropaddress'] = $cityData['pickupdropaddress'];
+      }
+
+
+      //set meta title and description start script
+      $titleName = "Book A Cab from " . $data['pickupdropaddress'] . ' to ' . (!empty($req['destination']) ? $req['destination'] : '') . ' for ' . (!empty($req['triptype']) ? $req['triptype'] : '');
+
+      $data['metadescription'] = $titleName;
+      $data['metasummary'] = $titleName;
+      $data['metakeywords'] = $titleName;
+      $data['title'] = $titleName;
+
+      _view('make_booking/form', $data);
+
+      //set meta title and description start script
+
+
+      //   $this->load->view('includes/doctype', $data);
+      //   $this->load->view('includes/meta_file', $data);
+      //   $this->load->view('includes/allcss', $data);
+      //   $this->load->view('includes/analytics_file', $data);
+      //   $this->load->view('includes/header', $data);
+
+
+      //   $this->load->view('reservation_form', $data);
+      //   $this->load->view('includes/footer', $data);
+      //   $this->load->view('includes/all-js', $data);
+      //   $this->load->view('includes/footer-bottom', $data);
+   }
 
    public function getdetails()
    {
@@ -266,7 +392,8 @@ class Makebooking extends CI_Controller
     * @param array $request
     * @return array
     */
-   private function searchvehicle($request): array {
+   private function searchvehicle($request): array
+   {
       $response = [];
       $data = [];
       $getdata = [];
@@ -527,7 +654,8 @@ class Makebooking extends CI_Controller
     *
     * @return void
     */
-   private function releaseVehicle(): void {
+   private function releaseVehicle(): void
+   {
       $today = date('Y-m-d H:i:s');
       $now = date('Y-m-d H:i:s', strtotime($today . ' -15 minutes'));
 
@@ -555,7 +683,8 @@ class Makebooking extends CI_Controller
     * @param int $id
     * @return string
     */
-   public function getCity($id): string {
+   public function getCity($id): string
+   {
       $where['a.id'] = $id;
       $select = 'CONCAT(a.cityname,",",b.statename) AS cityname';
       $from = 'pt_city as a';
@@ -579,7 +708,8 @@ class Makebooking extends CI_Controller
     * @param array $data
     * @return int
     */
-   private function checkavailibility($data): int {
+   private function checkavailibility($data): int
+   {
       $startdate = date('Y-m-d', strtotime($data['startdate']));
       $enddate = date('Y-m-d', strtotime($data['enddate']));
 
@@ -595,7 +725,8 @@ class Makebooking extends CI_Controller
     * @param string $triptype
     * @return array
     */
-   private function getterms($triptype): array {
+   private function getterms($triptype): array
+   {
       $table = 'pt_booking_terms';
       $keys = 'content';
       $orderby = 'content ASC';
@@ -612,7 +743,8 @@ class Makebooking extends CI_Controller
     *
     * @return array
     */
-   public function getCityList(): array {
+   public function getCityList(): array
+   {
       $response = array();
       $list = array();
       $data = array();

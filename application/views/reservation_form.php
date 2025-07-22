@@ -17,7 +17,7 @@
     $refundable_amount =  (float)$result['secu_amount'];
     
     $advance_amount =  advanceFare( $withonlinecharge ); 
-    
+
     
     $vechimodelname = $result['model'];  
     

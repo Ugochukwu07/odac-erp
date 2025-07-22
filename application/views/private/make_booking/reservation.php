@@ -182,7 +182,7 @@ if (!empty($terms)) {
         console.log('jQuery is loaded, version:', $.fn.jquery);
         
         function bookinglink(goparam) {
-            window.location.href = '<?php echo PEADEX; ?>login/dologin?utm=' + btoa(goparam);
+            window.location.href = '<?php echo adminurl('makebooking/reservationForm'); ?>?utm=' + btoa(goparam);
         }
 
         function showfare(req) {
