@@ -183,7 +183,7 @@ class Createentry extends CI_Controller{
 			$post['bookingid'] = $orderid; 
 			$post['triptype'] = $req['triptype']; 
 			$post['invoiceno'] = '';
-			$post['invoicedate'] = '';
+			$post['invoicedate'] = date('Y-m-d H:i:s');
 			$post['uniqueid'] = $uniqueid; 
 			$post['stock'] = $stock;
 			$post['email'] = $emailid;
@@ -234,7 +234,7 @@ class Createentry extends CI_Controller{
 			$post['statecharge'] = '0';
 			$post['apptype'] = strtoupper($apptype);
 			$post['driverassign'] = '';
-			$post['approvaltime'] = '';
+			$post['approvaltime'] = date('Y-m-d H:i:s');
 			$post['paymode'] = $paymode;
 			$post['wtcharge'] = '';
 			$post['totalwt'] = '';
@@ -251,7 +251,7 @@ class Createentry extends CI_Controller{
 			$post['coupon_code'] = $coupon_code;
 			$post['security_amount'] = $security_amount;
 			$post['bank_txn_id'] = $bank_txn_id;
-			$post['last_activity'] = ''; 
+			$post['last_activity'] = date('Y-m-d H:i:s'); 
 			$post['edit_date'] = date('Y-m-d H:i:s');
 		   
 

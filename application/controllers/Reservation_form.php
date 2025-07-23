@@ -143,19 +143,19 @@ class Reservation_form extends CI_Controller
     $post = $this->input->post();
 
     $bookurl = API_PATH . ('api/customer/Createentry/index');
-    $newpost['fullname'] = $post['fn'];
-    $newpost['mobileno'] = $post['mob'];
-    $newpost['emailid'] = $post['email'];
-    $newpost['noofpessanger'] = $post['ps'];
-    $newpost['pickupaddress'] = $post['pick'];
-    $newpost['dropaddress'] = $post['drop'];
-    $newpost['couponid'] = $post['cpnid'];
-    $newpost['stock'] = $post['stock'];
+    $newpost['fullname'] = isset($post['fn']) ? $post['fn'] : '';
+    $newpost['mobileno'] = isset($post['mob']) ? $post['mob'] : '';
+    $newpost['emailid'] = isset($post['email']) ? $post['email'] : '';
+    $newpost['noofpessanger'] = isset($post['ps']) ? $post['ps'] : '';
+    $newpost['pickupaddress'] = isset($post['pick']) ? $post['pick'] : '';
+    $newpost['dropaddress'] = isset($post['drop']) ? $post['drop'] : '';
+    $newpost['couponid'] = isset($post['cpnid']) ? $post['cpnid'] : '';
+    $newpost['stock'] = isset($post['stock']) ? $post['stock'] : '';
     $newpost['domainid'] = DOMAINID;
     $newpost['apptype'] = 'w';
 
-    $newpost['paymode'] = $post['paymode'];
-    $newpost['is_security_deposit'] = $post['is_deposit'] == 'yes' ? 'yes' : 'no';
+    $newpost['paymode'] = isset($post['paymode']) ? $post['paymode'] : '';
+    $newpost['is_security_deposit'] = isset($post['is_deposit']) && $post['is_deposit'] == 'yes' ? 'yes' : 'no';
 
 
     /*check session start here*/
@@ -175,7 +175,7 @@ class Reservation_form extends CI_Controller
     } else if ($return = $this->session->userdata('frontbooking')) {
       $uid_arr = $this->c_model->getSingle('pt_customer', ['id' => $return['c_uid']], 'uniqueid,id');
       $newpost['uniqueid'] = $uid_arr['uniqueid'];
-      $newpost['bookingamount'] = $post['bookingamount'];
+      $newpost['bookingamount'] = isset($post['bookingamount']) ? $post['bookingamount'] : '';
       $newpost['add_by_name'] = 'Website';
 
       /*forcly added on 22 oct 2023 start to disable gateway*/
@@ -192,6 +192,7 @@ class Reservation_form extends CI_Controller
 
     $res = curl_apis($bookurl, 'POST', $newpost);
     // print_r( $res );
+    $data['res'] = $res;
     $data['url'] = PEADEX . 'reservation_form.html?utm=' . base64_encode($post['stock']);
     if (!empty($res['status'])) {
       unset($newpost['stock']);

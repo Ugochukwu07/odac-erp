@@ -21,12 +21,7 @@ $carImage = $result['imageurl'];
 $cityname = $result['source'];
 $route = current(explode(',', $result['source'])) . ' <span style="font-family:times new roman"> → </span> ' . current(explode(',', $result['destination']));
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $title ?> - Car Rental</title>
+
     <style>
         :root {
             --primary-50: #f0f9ff;
@@ -409,14 +404,22 @@ $route = current(explode(',', $result['source'])) . ' <span style="font-family:t
             }
         }
     </style>
-</head>
-<body>
     <div class="container">
-        <div class="booking-layout">
+        <div class="booking-layout" id="booking-form" 
+             data-total-fare="<?= $totalfare ?>"
+             data-online-charge="<?= ONLINECHARGE ?>"
+             data-security-amount="<?= $refundable_amount ?>"
+             data-advance-percent="<?= CABADVNCE ?>"
+             data-full-amount="<?= $withonlinecharge ?>"
+             data-stock="<?= $result['stock'] ?>"
+             data-book-url="<?= PEADEX . 'reservation_form/book' ?>"
+             data-company-name="<?= COMPANYNAME ?>"
+             data-company-logo="<?= LOGO ?>"
+             data-company-address="<?= HEADOFFICE ?>">
             <!-- Left Section: Booking Details -->
             <div class="booking-details">
                 <h2>Your Booking Details</h2>
-                
+
                 <div class="booking-summary">
                     <div class="booking-item">
                         <span class="booking-label">Itinerary</span>
@@ -449,7 +452,7 @@ $route = current(explode(',', $result['source'])) . ' <span style="font-family:t
                         <span>Estimated Rental Cost</span>
                         <span>INR <?php echo twoDecimal($totalfare); ?></span>
                     </div>
-                    
+
                     <div id="discoutcontshow" style="display:<?= $offer ? 'block' : 'none'; ?>">
                         <div class="cost-item">
                             <span>Discount Amount</span>
@@ -467,7 +470,7 @@ $route = current(explode(',', $result['source'])) . ' <span style="font-family:t
                             <span style="color: var(--primary-600); cursor: pointer;">INR <em id="onlineChrge"><?= twoDecimal($onlineCharge); ?></em></span>
                         </div>
                     <?php } ?>
-                    
+
                     <div class="cost-item">
                         <span>Final Amount</span>
                         <span>INR <em id="paynow"><?= $offer ? twoDecimal(((float)$withonlinecharge - (float)$offer)) : twoDecimal($withonlinecharge); ?></em></span>
@@ -490,7 +493,7 @@ $route = current(explode(',', $result['source'])) . ' <span style="font-family:t
                 </div>
 
                 <div class="offer-zone" id="showDivC" style="display:<?= $offer ? 'none' : 'block'; ?>">Offer Zone</div>
-                
+
                 <div class="coupon-section" id="showcontentt">
                     <?php if ($cpnlist && !$offer) {
                         foreach ($cpnlist as $key => $value): ?>
@@ -515,7 +518,7 @@ $route = current(explode(',', $result['source'])) . ' <span style="font-family:t
 
                 <form>
                     <input type="hidden" name="" id="cpnid">
-                    
+
                     <div class="form-grid">
                         <div class="form-group">
                             <label class="form-label">First Name</label>
@@ -797,12 +800,12 @@ $route = current(explode(',', $result['source'])) . ' <span style="font-family:t
                         <div class="form-group full-width">
                             <label class="form-label">Drop-off Address</label>
                             <input type="text" placeholder="Drop-off Address" <?php if (in_array($tab, ['selfdrive', 'bike'])) { ?> readonly="readonly" <?php } else {
+                                                                                                                                                        echo $result['destination'];
+                                                                                                                                                    } ?> value="<?php if (in_array($tab, ['selfdrive', 'bike'])) {
+                                                                                                                                                                    echo $pickupdropaddress;;
+                                                                                                                                                                } else {
                                                                                                                                                                     echo $result['destination'];
-                                                                                                                                                                } ?> value="<?php if (in_array($tab, ['selfdrive', 'bike'])) {
-                                                                                                                                                                                                                            echo $pickupdropaddress;;
-                                                                                                                                                                                                                        } else {
-                                                                                                                                                                                                                            echo $result['destination'];
-                                                                                                                                                                                                                        } ?>" id="dropaddress" name="location2" class="form-input address" />
+                                                                                                                                                                } ?>" id="dropaddress" name="location2" class="form-input address" />
                         </div>
                     </div>
 
@@ -830,441 +833,3 @@ $route = current(explode(',', $result['source'])) . ' <span style="font-family:t
             </div>
         </div>
     </div>
-
-    <script type="text/javascript">
-        function applycoupon(id, cpn, dis) {
-            $("#discoutcontshow").show();
-            $("#defaultload").show();
-            $("#discountAmount").html(parseInt(dis).toFixed(2));
-            var aftdis = ('<?= $totalfare ?>' - dis).toFixed(2);
-            $("#discountHtmlValue").html(aftdis);
-            var online = '<?= ONLINECHARGE; ?>';
-            var ofull = parseInt(aftdis * online / 100);
-            $('#onlineChrge').html(ofull.toFixed(2));
-            var fnl = parseInt(aftdis) + (+ofull);
-            $('#paynow').html(fnl.toFixed(2));
-            $('#cpnid').val(id);
-            setTimeout(() => {
-                applyPaymode();
-            }, 500);
-        }
-
-        $(function() {
-            $("#showDivC").click(function() {
-                $('#showcontentt').show();
-            });
-        });
-
-        function checkFormData() {
-            var x = $('#firstname').val();
-            var y = $('#lastname').val();
-            var z = $('#emailid').val();
-            var ax = $('#mobileno1').val();
-            var ay = $('#mobileno2').val();
-            var az = $('#passnger').val();
-            if (x == "") {
-                $('#msgHTML').html('First Name is Blank!');
-                $('#msgerror').modal('show');
-                return false;
-            }
-            // if ( y == "") { $('#msgHTML').html('Last Name is Blank!'); $('#msgerror').modal('show'); return false; }
-            if (z == "") {
-                $('#msgHTML').html('Email Id is Blank!');
-                $('#msgerror').modal('show');
-                return false;
-            }
-            if (ax == "") {
-                $('#msgHTML').html('Mobile Number is Blank!');
-                $('#msgerror').modal('show');
-                return false;
-            }
-            if (az == "") {
-                $('#msgHTML').html('No. Of Passengers Are Blank!');
-                $('#msgerror').modal('show');
-                return false;
-            }
-            return true;
-        }
-
-        function grabbook() {
-            var STOCK = '<?= $result['stock']; ?>';
-            var fname = $('#firstname').val() + ' ' + $('#lastname').val();
-            var email = $('#emailid').val();
-            var mobileno = $('#mobileno1').val();
-            var passnger = $('#passnger').val();
-            var country = $('#country').val();
-            var pick = $('#pickaddress').val();
-            var drop = $('#dropaddress').val();
-            var cpnid = $('#cpnid').val();
-            var paymode = $('#payment_mode option:selected').val();
-            var is_deposit = $('#security_amount:checked').val();
-            var bookingamount = parseInt($('#payableAmount').text());
-
-            $('#submitBtn').prop('disabled', true);
-
-            //return;
-
-            if (checkFormData()) {
-                $.ajax({
-                    type: 'POST',
-                    url: '<?= PEADEX . 'reservation_form/book' ?>',
-                    data: {
-                        'stock': STOCK,
-                        'fn': fname,
-                        'email': email,
-                        'mob': mobileno,
-                        'ps': passnger,
-                        'cn': country,
-                        'pick': pick,
-                        'drop': drop,
-                        'cpnid': cpnid,
-                        'is_deposit': is_deposit,
-                        'paymode': paymode,
-                        'bookingamount': bookingamount
-                    },
-                    beforeSend: function() {
-                        $('#proceed').html('Please Wait..');
-                        $("#proceed").attr('disabled', true);
-                    },
-                    success: function(res) {
-                        var obj = JSON.parse(res);
-                        if (obj.url !== '' && !obj.is_gateway) {
-                            window.location.href = obj.url;
-                        } else {
-                            const dataR = obj.data;
-                            var keyId = obj.key_id;
-                            LoadRazorpay(keyId, dataR.gateway_amount, dataR.payid, dataR.name, dataR.email, dataR.mobile, dataR.orderid, obj.verify_url);
-                        }
-                    }
-                });
-            }
-        }
-
-
-        function applyPaymode() {
-            var paymode = $('#payment_mode option:selected').val();
-            var is_deposit = $('#security_amount:checked').val();
-            var securityAmount = '<?= $refundable_amount ?>';
-            var advPercent = '<?= CABADVNCE ?>';
-            var fullAmount = '<?= $withonlinecharge ?>';
-            var discountAmount = parseInt($('#discountAmount').text());
-            var afterDiscountPrice = parseFloat(fullAmount) - parseFloat(discountAmount);
-            var payableAmount = parseInt(afterDiscountPrice * advPercent / 100);
-
-            var finalPayAmount = afterDiscountPrice;
-            if (paymode === 'advance') {
-                finalPayAmount = payableAmount;
-            }
-
-            var amountToShow = parseFloat((is_deposit === 'yes') ? (parseFloat(finalPayAmount) + parseFloat(securityAmount)) : finalPayAmount);
-
-            if (is_deposit === 'yes') {
-                $('.secuAmt').show();
-            } else {
-                $('.secuAmt').hide();
-            }
-
-            $('#payableAmount').html(amountToShow.toFixed(2));
-            $('#payableAmountDisplay').html(amountToShow.toFixed(2));
-        }
-    </script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script>
-        function verifyId(orderid, payid, verifyUrl, amount) {
-
-            $.ajax({
-                type: 'POST',
-                url: verifyUrl,
-                data: {
-                    'order_id': orderid,
-                    'payid': payid,
-                    'amount': amount
-                },
-                beforeSend: () => {
-                    $('#proceed').html('Proccessing...');
-                },
-                success: function(res) {
-                    console.log(res);
-                    var obj = JSON.parse(res);
-                    if (obj.url !== '') {
-                        window.location.href = obj.url;
-                    } else {
-                        alert(obj.message);
-                    }
-                }
-            });
-        }
-
-
-        function LoadRazorpay(keyId, amount, payid, fullName, emailId, phoneNo, orderId, verifyUrl) {
-
-            var options = {
-                "key": keyId,
-                "amount": amount * 100,
-                "currency": "INR",
-                "name": "<?= COMPANYNAME; ?>",
-                "description": "Cab Booking Amount for order ID: " + orderId,
-                "image": "<?= LOGO ?>",
-                "order_id": "",
-                "handler": function(response) {
-                    verifyId(orderId, response.razorpay_payment_id, verifyUrl, amount);
-                    console.log(response);
-                },
-                "prefill": {
-                    "name": fullName,
-                    "email": emailId,
-                    "contact": phoneNo
-                },
-                "notes": {
-                    "address": "<?= HEADOFFICE ?>"
-                },
-                "theme": {
-                    "color": "#3399cc"
-                }
-            };
-            var rzp1 = new Razorpay(options);
-            rzp1.open();
-            rzp1.on('payment.failed', function(response) {
-                alert(response.error.code);
-                // alert(response.error.description);
-                // alert(response.error.source);
-                // alert(response.error.step);
-                // alert(response.error.reason);
-                // alert(response.error.metadata.order_id);
-                // alert(response.error.metadata.payment_id);
-            });
-
-
-        }
-    </script>
-</body>
-
-</html>
-
-
-                                <!-- </form> -->
-
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!--/.right side portion end -->
-        </div>
-
-
-        <div class="spacer30"></div>
-    </div>
-</section>
-
-
-<script type="text/javascript">
-    function applycoupon(id, cpn, dis) {
-        $("#discoutcontshow").show();
-        $("#defaultload").show();
-        $("#discountAmount").html(parseInt(dis).toFixed(2));
-        var aftdis = ('<?= $totalfare ?>' - dis).toFixed(2);
-        $("#discountHtmlValue").html(aftdis);
-        var online = '<?= ONLINECHARGE; ?>';
-        var ofull = parseInt(aftdis * online / 100);
-        $('#onlineChrge').html(ofull.toFixed(2));
-        var fnl = parseInt(aftdis) + (+ofull);
-        $('#paynow').html(fnl.toFixed(2));
-        $('#cpnid').val(id);
-        setTimeout(() => {
-            applyPaymode();
-        }, 500);
-    }
-
-    $(function() {
-        $("#showDivC").click(function() {
-            $('#showcontentt').show();
-        });
-    });
-
-    function checkFormData() {
-        var x = $('#firstname').val();
-        var y = $('#lastname').val();
-        var z = $('#emailid').val();
-        var ax = $('#mobileno1').val();
-        var ay = $('#mobileno2').val();
-        var az = $('#passnger').val();
-        if (x == "") {
-            $('#msgHTML').html('First Name is Blank!');
-            $('#msgerror').modal('show');
-            return false;
-        }
-        // if ( y == "") { $('#msgHTML').html('Last Name is Blank!'); $('#msgerror').modal('show'); return false; }
-        if (z == "") {
-            $('#msgHTML').html('Email Id is Blank!');
-            $('#msgerror').modal('show');
-            return false;
-        }
-        if (ax == "") {
-            $('#msgHTML').html('Mobile Number is Blank!');
-            $('#msgerror').modal('show');
-            return false;
-        }
-        if (az == "") {
-            $('#msgHTML').html('No. Of Passengers Are Blank!');
-            $('#msgerror').modal('show');
-            return false;
-        }
-        return true;
-    }
-
-    function grabbook() {
-        var STOCK = '<?= $result['stock']; ?>';
-        var fname = $('#firstname').val() + ' ' + $('#lastname').val();
-        var email = $('#emailid').val();
-        var mobileno = $('#mobileno1').val();
-        var passnger = $('#passnger').val();
-        var country = $('#country').val();
-        var pick = $('#pickaddress').val();
-        var drop = $('#dropaddress').val();
-        var cpnid = $('#cpnid').val();
-        var paymode = $('#payment_mode option:selected').val();
-        var is_deposit = $('#security_amount:checked').val();
-        var bookingamount = parseInt($('#payableAmount').text());
-
-        $('#submitBtn').prop('disabled', true);
-
-        //return;
-
-        if (checkFormData()) {
-            $.ajax({
-                type: 'POST',
-                url: '<?= PEADEX . 'reservation_form/book' ?>',
-                data: {
-                    'stock': STOCK,
-                    'fn': fname,
-                    'email': email,
-                    'mob': mobileno,
-                    'ps': passnger,
-                    'cn': country,
-                    'pick': pick,
-                    'drop': drop,
-                    'cpnid': cpnid,
-                    'is_deposit': is_deposit,
-                    'paymode': paymode,
-                    'bookingamount': bookingamount
-                },
-                beforeSend: function() {
-                    $('#proceed').html('Please Wait..');
-                    $("#proceed").attr('disabled', true);
-                },
-                success: function(res) {
-                    var obj = JSON.parse(res);
-                    if (obj.url !== '' && !obj.is_gateway) {
-                        window.location.href = obj.url;
-                    } else {
-                        const dataR = obj.data;
-                        var keyId = obj.key_id;
-                        LoadRazorpay(keyId, dataR.gateway_amount, dataR.payid, dataR.name, dataR.email, dataR.mobile, dataR.orderid, obj.verify_url);
-                    }
-                }
-            });
-        }
-    }
-
-
-    function applyPaymode() {
-        var paymode = $('#payment_mode option:selected').val();
-        var is_deposit = $('#security_amount:checked').val();
-        var securityAmount = '<?= $refundable_amount ?>';
-        var advPercent = '<?= CABADVNCE ?>';
-        var fullAmount = '<?= $withonlinecharge ?>';
-        var discountAmount = parseInt($('#discountAmount').text());
-        var afterDiscountPrice = parseFloat(fullAmount) - parseFloat(discountAmount);
-        var payableAmount = parseInt(afterDiscountPrice * advPercent / 100);
-
-        var finalPayAmount = afterDiscountPrice;
-        if (paymode === 'advance') {
-            finalPayAmount = payableAmount;
-        }
-
-        var amountToShow = parseFloat((is_deposit === 'yes') ? (parseFloat(finalPayAmount) + parseFloat(securityAmount)) : finalPayAmount);
-
-        if (is_deposit === 'yes') {
-            $('.secuAmt').show();
-        } else {
-            $('.secuAmt').hide();
-        }
-
-        $('#payableAmount').html(amountToShow.toFixed(2));
-    }
-</script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-    function verifyId(orderid, payid, verifyUrl, amount) {
-
-        $.ajax({
-            type: 'POST',
-            url: verifyUrl,
-            data: {
-                'order_id': orderid,
-                'payid': payid,
-                'amount': amount
-            },
-            beforeSend: () => {
-                $('#proceed').html('Proccessing...');
-            },
-            success: function(res) {
-                console.log(res);
-                var obj = JSON.parse(res);
-                if (obj.url !== '') {
-                    window.location.href = obj.url;
-                } else {
-                    alert(obj.message);
-                }
-            }
-        });
-    }
-
-
-    function LoadRazorpay(keyId, amount, payid, fullName, emailId, phoneNo, orderId, verifyUrl) {
-
-        var options = {
-            "key": keyId,
-            "amount": amount * 100,
-            "currency": "INR",
-            "name": "<?= COMPANYNAME; ?>",
-            "description": "Cab Booking Amount for order ID: " + orderId,
-            "image": "<?= LOGO ?>",
-            "order_id": "",
-            "handler": function(response) {
-                verifyId(orderId, response.razorpay_payment_id, verifyUrl, amount);
-                console.log(response);
-            },
-            "prefill": {
-                "name": fullName,
-                "email": emailId,
-                "contact": phoneNo
-            },
-            "notes": {
-                "address": "<?= HEADOFFICE ?>"
-            },
-            "theme": {
-                "color": "#3399cc"
-            }
-        };
-        var rzp1 = new Razorpay(options);
-        rzp1.open();
-        rzp1.on('payment.failed', function(response) {
-            alert(response.error.code);
-            // alert(response.error.description);
-            // alert(response.error.source);
-            // alert(response.error.step);
-            // alert(response.error.reason);
-            // alert(response.error.metadata.order_id);
-            // alert(response.error.metadata.payment_id);
-        });
-
-
-    }
-</script>
-
-</body>
-
-</html>

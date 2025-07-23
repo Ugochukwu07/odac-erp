@@ -263,3 +263,242 @@
 		
 		}); 
 </script>
+
+
+
+<?php
+
+    //check if page link is private/makebooking/reservationForm
+    /**
+     * Check if the current page link is 'private/makebooking/reservationForm'
+     * and execute custom logic if true.
+     *
+     * This uses CodeIgniter's URI class to determine the current controller and method.
+     * Adjust the logic below as needed for your use case.
+     */
+    $CI = &get_instance();
+    $controller = $CI->uri->segment(2); // 'makebooking'
+    $method = $CI->uri->segment(3);     // 'reservationForm'
+    var_dump($controller, $method);
+
+    if ($controller === 'makebooking' && $method === 'reservationForm') {
+?>
+    <script type="text/javascript">
+        function applycoupon(id, cpn, dis) {
+            $("#discoutcontshow").show();
+            $("#defaultload").show();
+            $("#discountAmount").html(parseInt(dis).toFixed(2));
+            
+            // Get total fare from a data attribute or default to 0
+            var totalfare = parseFloat($('#booking-form').data('total-fare') || 0);
+            var aftdis = (totalfare - dis).toFixed(2);
+            $("#discountHtmlValue").html(aftdis);
+            
+            // Get online charge from data attribute or default to 1
+            var online = parseFloat($('#booking-form').data('online-charge') || 1);
+            var ofull = parseInt(aftdis * online / 100);
+            $('#onlineChrge').html(ofull.toFixed(2));
+            var fnl = parseInt(aftdis) + (+ofull);
+            $('#paynow').html(fnl.toFixed(2));
+            $('#cpnid').val(id);
+            setTimeout(() => {
+                applyPaymode();
+            }, 500);
+        }
+
+        $(function() {
+            $("#showDivC").click(function() {
+                $('#showcontentt').show();
+            });
+        });
+
+        function checkFormData() {
+            var x = $('#firstname').val();
+            var y = $('#lastname').val();
+            var z = $('#emailid').val();
+            var ax = $('#mobileno1').val();
+            var ay = $('#mobileno2').val();
+            var az = $('#passnger').val();
+            if (x == "") {
+                $('#msgHTML').html('First Name is Blank!');
+                $('#msgerror').modal('show');
+                return false;
+            }
+            // if ( y == "") { $('#msgHTML').html('Last Name is Blank!'); $('#msgerror').modal('show'); return false; }
+            if (z == "") {
+                $('#msgHTML').html('Email Id is Blank!');
+                $('#msgerror').modal('show');
+                return false;
+            }
+            if (ax == "") {
+                $('#msgHTML').html('Mobile Number is Blank!');
+                $('#msgerror').modal('show');
+                return false;
+            }
+            if (az == "") {
+                $('#msgHTML').html('No. Of Passengers Are Blank!');
+                $('#msgerror').modal('show');
+                return false;
+            }
+            return true;
+        }
+
+        function grabbook() {
+            var STOCK = $('#booking-form').data('stock') || '';
+            var fname = $('#firstname').val() + ' ' + $('#lastname').val();
+            var email = $('#emailid').val();
+            var mobileno = $('#mobileno1').val();
+            var passnger = $('#passnger').val();
+            var country = $('#country').val();
+            var pick = $('#pickaddress').val();
+            var drop = $('#dropaddress').val();
+            var cpnid = $('#cpnid').val();
+            var paymode = $('#payment_mode option:selected').val();
+            var is_deposit = $('#security_amount:checked').val();
+            var bookingamount = parseInt($('#payableAmount').text() || 0);
+
+            $('#submitBtn').prop('disabled', true);
+
+            //return;
+
+            if (checkFormData()) {
+                $.ajax({
+                    type: 'POST',
+                    url: $('#booking-form').data('book-url') || '/reservation_form/book',
+                    data: {
+                        'stock': STOCK,
+                        'fn': fname,
+                        'email': email,
+                        'mob': mobileno,
+                        'ps': passnger,
+                        'cn': country,
+                        'pick': pick,
+                        'drop': drop,
+                        'cpnid': cpnid,
+                        'is_deposit': is_deposit,
+                        'paymode': paymode,
+                        'bookingamount': bookingamount
+                    },
+                    beforeSend: function() {
+                        $('#proceed').html('Please Wait..');
+                        $("#proceed").attr('disabled', true);
+                    },
+                    success: function(res) {
+                        var obj = JSON.parse(res);
+                        console.log(obj);
+                        if (obj.url !== '' && !obj.is_gateway) {
+                            window.location.href = obj.url;
+                        } else {
+                            const dataR = obj.data;
+                            var keyId = obj.key_id;
+                            LoadRazorpay(keyId, dataR.gateway_amount, dataR.payid, dataR.name, dataR.email, dataR.mobile, dataR.orderid, obj.verify_url);
+                        }
+                    }
+                });
+            }
+        }
+
+
+        function applyPaymode() {
+            var paymode = $('#payment_mode option:selected').val();
+            var is_deposit = $('#security_amount:checked').val();
+            
+            // Get values from data attributes or use defaults
+            var securityAmount = parseFloat($('#booking-form').data('security-amount') || 0);
+            var advPercent = parseFloat($('#booking-form').data('advance-percent') || 100);
+            var fullAmount = parseFloat($('#booking-form').data('full-amount') || 0);
+            
+            var discountAmount = parseInt($('#discountAmount').text() || 0);
+            var afterDiscountPrice = parseFloat(fullAmount) - parseFloat(discountAmount);
+            var payableAmount = parseInt(afterDiscountPrice * advPercent / 100);
+
+            var finalPayAmount = afterDiscountPrice;
+            if (paymode === 'advance') {
+                finalPayAmount = payableAmount;
+            }
+
+            var amountToShow = parseFloat((is_deposit === 'yes') ? (parseFloat(finalPayAmount) + parseFloat(securityAmount)) : finalPayAmount);
+
+            if (is_deposit === 'yes') {
+                $('.secuAmt').show();
+            } else {
+                $('.secuAmt').hide();
+            }
+
+            $('#payableAmount').html(amountToShow.toFixed(2));
+            $('#payableAmountDisplay').html(amountToShow.toFixed(2));
+        }
+    </script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        function verifyId(orderid, payid, verifyUrl, amount) {
+
+            $.ajax({
+                type: 'POST',
+                url: verifyUrl,
+                data: {
+                    'order_id': orderid,
+                    'payid': payid,
+                    'amount': amount
+                },
+                beforeSend: () => {
+                    $('#proceed').html('Proccessing...');
+                },
+                success: function(res) {
+                    console.log(res);
+                    var obj = JSON.parse(res);
+                    if (obj.url !== '') {
+                        window.location.href = obj.url;
+                    } else {
+                        alert(obj.message);
+                    }
+                }
+            });
+        }
+
+
+        function LoadRazorpay(keyId, amount, payid, fullName, emailId, phoneNo, orderId, verifyUrl) {
+
+            var options = {
+                "key": keyId,
+                "amount": amount * 100,
+                "currency": "INR",
+                "name": $('#booking-form').data('company-name') || 'Car Rental',
+                "description": "Cab Booking Amount for order ID: " + orderId,
+                "image": $('#booking-form').data('company-logo') || '',
+                "order_id": "",
+                "handler": function(response) {
+                    verifyId(orderId, response.razorpay_payment_id, verifyUrl, amount);
+                    console.log(response);
+                },
+                "prefill": {
+                    "name": fullName,
+                    "email": emailId,
+                    "contact": phoneNo
+                },
+                "notes": {
+                    "address": $('#booking-form').data('company-address') || ''
+                },
+                "theme": {
+                    "color": "#3399cc"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+            rzp1.on('payment.failed', function(response) {
+                alert(response.error.code);
+                // alert(response.error.description);
+                // alert(response.error.source);
+                // alert(response.error.step);
+                // alert(response.error.reason);
+                // alert(response.error.metadata.order_id);
+                // alert(response.error.metadata.payment_id);
+            });
+
+
+        }
+    </script>
+<?php
+}
+
+?>
