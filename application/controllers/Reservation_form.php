@@ -22,15 +22,15 @@ class Reservation_form extends CI_Controller
     $post['pagetype'] = '';
     $post['pageurl'] = 'reservation_form.html';
     $post['domainid'] = DOMAINID;
-    $data['payment_mode'] = 'advance';
+    $data['payment_mode'] = 'online';
     if ($return = $this->session->userdata('adminbooking')) {
       $post['domainid'] = $return['domainid'];
-      $data['payment_mode_list'] = ['advance' => 'Advance Payment', 'full' => 'Full Payment', 'cash' => 'Cash'];
+      $data['payment_mode_list'] = ['online' => 'Online Payment', 'cash' => 'Cash'];
     } else {
       if (RAZOR_PAY_ENABLE_DISABLE == 'enable') {
-        $data['payment_mode_list'] = ['advance' => 'Advance Payment', 'full' => 'Full Payment'];
+        $data['payment_mode_list'] = ['online' => 'Online Payment'];
       } else {
-        $data['payment_mode_list'] = ['advance' => 'Advance Payment', 'full' => 'Full Payment', 'cash' => 'Cash'];
+        $data['payment_mode_list'] = ['online' => 'Online Payment', 'cash' => 'Cash'];
       }
     }
     $data['metadescription'] = '';

@@ -373,8 +373,8 @@ class Booking extends CI_Controller{
             	    $push['endcoords'] = (string) $value['endcoords']; 
             	    $push['tollcharge'] = (string) $value['tollcharge']; 
             	    $push['statecharge'] = (string) $value['statecharge'];
-            	    $push['driverassign'] = (string) ( $value['driverassign'] != '0000-00-00 00:00:00' ? date('d M Y, h:i A', strtotime($value['driverassign'])) : ''); 
-            	    $push['approvaltime'] = (string) ( $value['approvaltime'] != '0000-00-00 00:00:00' ? date('d M Y, h:i A', strtotime($value['approvaltime'])) : '');
+            	    $push['driverassign'] = (string) ( !empty($value['driverassign']) && $value['driverassign'] != '0000-00-00 00:00:00' ? date('d M Y, h:i A', strtotime($value['driverassign'])) : ''); 
+            	    $push['approvaltime'] = (string) ( !empty($value['approvaltime']) && $value['approvaltime'] != '0000-00-00 00:00:00' ? date('d M Y, h:i A', strtotime($value['approvaltime'])) : '');
             	    $push['paymode'] = (string) $value['paymode']; 
             	    $push['wtcharge'] = (string) $value['wtcharge'];
             	    $push['totalwt'] = (string) $value['totalwt']; 

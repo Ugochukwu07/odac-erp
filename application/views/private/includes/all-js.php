@@ -386,13 +386,13 @@
                     success: function(res) {
                         var obj = JSON.parse(res);
                         console.log(obj);
-                        if (obj.url !== '' && !obj.is_gateway) {
-                            window.location.href = obj.url;
-                        } else {
-                            const dataR = obj.data;
-                            var keyId = obj.key_id;
-                            LoadRazorpay(keyId, dataR.gateway_amount, dataR.payid, dataR.name, dataR.email, dataR.mobile, dataR.orderid, obj.verify_url);
-                        }
+                        // if (obj.url !== '' && !obj.is_gateway) {
+                        //     window.location.href = obj.url;
+                        // } else {
+                        //     const dataR = obj.data;
+                        //     var keyId = obj.key_id;
+                        //     LoadRazorpay(keyId, dataR.gateway_amount, dataR.payid, dataR.name, dataR.email, dataR.mobile, dataR.orderid, obj.verify_url);
+                        // }
                     }
                 });
             }
@@ -413,7 +413,7 @@
             var payableAmount = parseInt(afterDiscountPrice * advPercent / 100);
 
             var finalPayAmount = afterDiscountPrice;
-            if (paymode === 'advance') {
+            if (paymode === 'online') {
                 finalPayAmount = payableAmount;
             }
 

@@ -593,7 +593,7 @@ function applyPaymode(){
     var payableAmount = parseInt(afterDiscountPrice*advPercent/100); 
     
     var finalPayAmount = afterDiscountPrice;
-    if( paymode === 'advance'){
+    if( paymode === 'online'){
         finalPayAmount = payableAmount; 
     }
      

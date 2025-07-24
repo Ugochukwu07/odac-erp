@@ -47,7 +47,12 @@ class Createentry extends CI_Controller{
     $bookedfrom = isset($request['bookedfrom']) ? trim($request['bookedfrom']) : false;
     $offeramount = isset($request['offeramount']) ? trim($request['offeramount']) : false;
     $advamount = isset($request['bookingamount']) ? trim($request['bookingamount']) : false;
-    $paymode = !empty($request['paymode']) ? trim($request['paymode']) : 'full'; 
+    		$paymode = !empty($request['paymode']) ? trim($request['paymode']) : 'online';
+		
+		// Map frontend paymode values to database values
+		if ($paymode === 'advance' || $paymode === 'full') {
+			$paymode = 'online';
+		} 
     $add_by = !empty($request['add_by']) ? trim($request['add_by']) : '';
     $add_by_name = !empty($request['add_by_name']) ? trim($request['add_by_name']) : '';
     $is_security_deposit = !empty($request['is_security_deposit']) ? trim($request['is_security_deposit']) : 'no';
@@ -101,7 +106,7 @@ class Createentry extends CI_Controller{
 		exit;
     }
     
-    if( !empty($apptype) && (strtoupper($apptype) == 'A') && !in_array($paymode,['cash','advance','full']) ){
+    if( !empty($apptype) && (strtoupper($apptype) == 'A') && !in_array($paymode,['cash','online']) ){
         $response['status'] = FALSE;
 		$response['message'] = 'Please enter valid payment mode !'; 
 		echo json_encode($response);
@@ -195,11 +200,14 @@ class Createentry extends CI_Controller{
 			$post['fareperkm'] = $req['fareperkm'];
 			$post['estimatedkm'] = $req['googlekm'];
 			$post['totalkm'] = $req['estkm'];
+			$post['minkm'] = isset($req['minkm']) ? $req['minkm'] : '0';
 			$post['estimatedtime'] = $req['esttime'];
 			//$post['estimatedfare'] = $req['est_fare'];
 			$post['estimatedfare'] = $principalAmount;
 			$post['drivercharge'] = $req['drivercharge'];
 			$post['driverdays'] = $req['days'];
+			$post['ext_days'] = '0';
+			$post['ext_from_date'] = '0000-00-00 00:00:00';
 			$post['totaldrivercharge'] = '0';
 			$post['nightcharge'] = $req['nightcharge'];
 			$post['totalnights'] = '0';
@@ -207,6 +215,7 @@ class Createentry extends CI_Controller{
 			$post['gstpercent'] = $req['gst'];
 			$post['gstapplyon'] = $principalAmount;
 			$post['totalgstcharge'] = $getGSTAmount;
+			$post['othercharge'] = isset($req['othercharge']) ? $req['othercharge'] : '0';
 			$post['onlinepercent'] = ONLINECHARGE;
 			$post['onlinecharge'] = $onlinecharge;
 			$post['totalamount'] = twoDecimal( (float)$req['withgstamount']-(float)$discount );
@@ -233,17 +242,19 @@ class Createentry extends CI_Controller{
 			$post['tollcharge'] = '0';
 			$post['statecharge'] = '0';
 			$post['apptype'] = strtoupper($apptype);
-			$post['driverassign'] = '';
+			$post['driverassign'] = NULL;
 			$post['approvaltime'] = date('Y-m-d H:i:s');
 			$post['paymode'] = $paymode;
-			$post['wtcharge'] = '';
-			$post['totalwt'] = '';
+			$post['wtcharge'] = '0';
+			$post['totalwt'] = '0';
 			$post['totalwtcharge'] = 0;
 			$post['bookingamount'] = $bookingamount;
 			$post['pickupcity'] = $req['source'];
 			$post['dropcity'] = $req['destination'];
 			if($req['route']){
-			$post['routes'] = json_encode($req['route']);
+				$post['routes'] = json_encode($req['route']);
+			} else {
+				$post['routes'] = '0';
 			}
 			$post['modelname'] = !empty($modelname['model'])?$modelname['model']:'';
 			$post['add_by'] = $add_by;
@@ -251,14 +262,19 @@ class Createentry extends CI_Controller{
 			$post['coupon_code'] = $coupon_code;
 			$post['security_amount'] = $security_amount;
 			$post['bank_txn_id'] = $bank_txn_id;
-			$post['last_activity'] = date('Y-m-d H:i:s'); 
-			$post['edit_date'] = date('Y-m-d H:i:s');
+			$post['crontab'] = 0;
+					$post['edit_verify_status'] = '';
+		$post['edit_by_mobile'] = '';
+		$post['edit_by_name'] = '';
+		$post['close_date'] = NULL;
+		$post['last_activity'] = date('Y-m-d H:i:s'); 
+		$post['edit_date'] = date('Y-m-d H:i:s');
 		   
 
 		   $update = $this->c_model->saveupdate( $table, $post ) ;
 
 		   if($update){  
-		       
+		        
 		    /*Added on 27-April-2024 Start Script*/
 		    $bkamount = [];
 		    $bkamount['booking_id'] = $update;
