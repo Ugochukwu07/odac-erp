@@ -284,6 +284,15 @@
     if ($controller === 'makebooking' && $method === 'reservationForm') {
 ?>
     <script type="text/javascript">
+
+        //get reservation form data from local storage
+        var reservationForm = localStorage.getItem('reservation_form');
+        console.log(reservationForm);
+        if (reservationForm) {
+            var obj = JSON.parse(reservationForm);
+            console.log(obj);
+        }
+
         function applycoupon(id, cpn, dis) {
             $("#discoutcontshow").show();
             $("#defaultload").show();
@@ -386,6 +395,8 @@
                     success: function(res) {
                         var obj = JSON.parse(res);
                         console.log(obj.url);
+                        //add obj.res to local storage
+                        localStorage.setItem('reservation_form', JSON.stringify(obj.res));
                         if (obj.url !== '' && !obj.is_gateway) {
                             window.location.href = obj.url;
                         } else {
