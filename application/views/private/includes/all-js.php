@@ -385,7 +385,7 @@
                     },
                     success: function(res) {
                         var obj = JSON.parse(res);
-                        // console.log(obj);
+                        console.log(obj.url);
                         if (obj.url !== '' && !obj.is_gateway) {
                             window.location.href = obj.url;
                         } else {

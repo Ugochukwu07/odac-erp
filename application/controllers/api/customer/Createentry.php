@@ -427,7 +427,7 @@ protected  function adminPayment($amount=null,$book_id=null,$add_by=null,$paymod
 	$save['booking_id'] = $book_id;
 	$save['added_on'] = date('Y-m-d H:i:s');
 	$save['add_by'] = $add_by;
-	$save['add_by_id'] = !empty($loginuserid) ? $loginuserid['id'] : '';
+	$save['add_by_id'] = !empty($loginuserid) ? $loginuserid['id'] : 0;
 	$save['amount'] = $amount;
 	$save['paymode'] = $paymode; 
 	$save['before_amt'] = 0; 

@@ -5,7 +5,7 @@ class Slip extends CI_Controller{
 	var $table;
 	 function __construct() {
          parent::__construct();   
-	     adminlogincheck();
+	     // adminlogincheck(); // Commented out to allow slip generation without admin login
 	     $this->pagename = 'Slip';
 	     $this->table = 'pt_booking';
 	     

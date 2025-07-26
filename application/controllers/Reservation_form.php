@@ -195,7 +195,7 @@ class Reservation_form extends CI_Controller
     log_message('error', 'Booking API Response: ' . json_encode($res));
     // print_r( $res );
     $data['res'] = $res;
-    $data['url'] = PEADEX . 'reservation_form.html?utm=' . base64_encode($post['stock']);
+    $data['url'] = PEADEX . 'private/makebooking/reservationForm?utm=' . base64_encode($post['stock']);
     if (!empty($res['status'])) {
       unset($newpost['stock']);
       $out['res'] = $res['data'];
