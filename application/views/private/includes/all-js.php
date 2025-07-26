@@ -385,14 +385,14 @@
                     },
                     success: function(res) {
                         var obj = JSON.parse(res);
-                        console.log(obj);
-                        // if (obj.url !== '' && !obj.is_gateway) {
-                        //     window.location.href = obj.url;
-                        // } else {
-                        //     const dataR = obj.data;
-                        //     var keyId = obj.key_id;
-                        //     LoadRazorpay(keyId, dataR.gateway_amount, dataR.payid, dataR.name, dataR.email, dataR.mobile, dataR.orderid, obj.verify_url);
-                        // }
+                        // console.log(obj);
+                        if (obj.url !== '' && !obj.is_gateway) {
+                            window.location.href = obj.url;
+                        } else {
+                            const dataR = obj.data;
+                            var keyId = obj.key_id;
+                            LoadRazorpay(keyId, dataR.gateway_amount, dataR.payid, dataR.name, dataR.email, dataR.mobile, dataR.orderid, obj.verify_url);
+                        }
                     }
                 });
             }

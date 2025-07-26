@@ -207,7 +207,8 @@ class Createentry extends CI_Controller{
 			$post['drivercharge'] = $req['drivercharge'];
 			$post['driverdays'] = $req['days'];
 			$post['ext_days'] = '0';
-			$post['ext_from_date'] = '0000-00-00 00:00:00';
+			$post['ext_from_date'] = date('Y-m-d H:i:s');
+			$post['ext_to_date'] = date('Y-m-d H:i:s');
 			$post['totaldrivercharge'] = '0';
 			$post['nightcharge'] = $req['nightcharge'];
 			$post['totalnights'] = '0';
@@ -257,8 +258,8 @@ class Createentry extends CI_Controller{
 				$post['routes'] = '0';
 			}
 			$post['modelname'] = !empty($modelname['model'])?$modelname['model']:'';
-			$post['add_by'] = $add_by;
-			$post['add_by_name'] = $add_by_name;
+					$post['add_by'] = $add_by;
+		$post['add_by_name'] = $add_by_name;
 			$post['coupon_code'] = $coupon_code;
 			$post['security_amount'] = $security_amount;
 			$post['bank_txn_id'] = $bank_txn_id;
@@ -266,9 +267,20 @@ class Createentry extends CI_Controller{
 					$post['edit_verify_status'] = '';
 		$post['edit_by_mobile'] = '';
 		$post['edit_by_name'] = '';
+		$post['extend_by_name'] = '';
+		$post['extend_by_mobile'] = '';
+		$post['ext_apply_on'] = NULL;
+		$post['total_extend_days'] = '0';
+		$post['refund_amount'] = '0';
+		$post['closed_by_name'] = '';
+		$post['closed_by_mobile'] = '';
+		$post['force_discount'] = '0';
+		$post['verify_status'] = '';
 		$post['close_date'] = NULL;
 		$post['last_activity'] = date('Y-m-d H:i:s'); 
 		$post['edit_date'] = date('Y-m-d H:i:s');
+		$post['invoice_url'] = '';
+		// $post['final_invoice_url'] = '';
 		   
 
 		   $update = $this->c_model->saveupdate( $table, $post ) ;
