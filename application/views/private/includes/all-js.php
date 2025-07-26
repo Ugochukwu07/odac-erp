@@ -368,13 +368,7 @@
 
             $('#submitBtn').prop('disabled', true);
 
-            //return;
-
-            if (checkFormData()) {
-                $.ajax({
-                    type: 'POST',
-                    url: $('#booking-form').data('book-url') || '/reservation_form/book',
-                    data: {
+            var body = {
                         'stock': STOCK,
                         'fn': fname,
                         'email': email,
@@ -387,7 +381,18 @@
                         'is_deposit': is_deposit,
                         'paymode': paymode,
                         'bookingamount': bookingamount
-                    },
+                    };
+
+                    console.log(body);
+                    
+
+            //return;
+
+            if (checkFormData()) {
+                $.ajax({
+                    type: 'POST',
+                    url: $('#booking-form').data('book-url') || '/reservation_form/book',
+                    data: body,
                     beforeSend: function() {
                         $('#proceed').html('Please Wait..');
                         $("#proceed").attr('disabled', true);
