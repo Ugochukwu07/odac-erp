@@ -3,7 +3,8 @@
     "description": "Odeac Project",
     "type": "project",
     "require": {
-        "vlucas/phpdotenv": "^5.0"
+        "vlucas/phpdotenv": "^5.0",
+        "mpdf/mpdf": "^8.2"
     },
     "license": "proprietary"
 }

@@ -67,7 +67,16 @@ class Slip extends CI_Controller{
             //} 
  
               header('Content-Type: text/html; charset=utf-8');
-              require_once APPPATH.'/third_party/mpdf/vendor/autoload.php'; 
+              
+              // Try Composer autoloader first, fallback to third_party
+              if (file_exists(FCPATH.'vendor/autoload.php')) {
+                  require_once FCPATH.'vendor/autoload.php';
+              } elseif (file_exists(APPPATH.'third_party/mpdf/vendor/autoload.php')) {
+                  require_once APPPATH.'third_party/mpdf/vendor/autoload.php';
+              } else {
+                  // If neither exists, show error message
+                  die('mPDF library not found. Please install via Composer or upload the library to third_party/mpdf/');
+              }
 
               $mpdf = new \Mpdf\Mpdf(); 
 
