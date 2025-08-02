@@ -432,7 +432,7 @@ class Bookingview extends CI_Controller{
             $join[1]['on'] = 'a.modelid = c.id';
             $join[1]['key'] = 'LEFT';
             
-            $join[2]['table'] = 'users as u';
+            $join[2]['table'] = 'pt_users as u';
             $join[2]['on'] = 'a.add_by = u.mobile';
             $join[2]['key'] = 'LEFT';
             
