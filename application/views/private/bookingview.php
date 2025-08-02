@@ -849,6 +849,7 @@ function loadCityData( qparam ){
                         { data: "id", "name": "Pickup/Drop City", "title": "Pickup/Drop City","render": pickup_details_render }, 
                         { data: "id", "name": "Pickup/Drop Date", "title": "Pickup/Drop Date","render": pickup_dates_render }, 
                         { data: "id", "name": "Vehicle Details", "title": "Vehicle Details","render": vehicle_details_render },  
+                        { data: "id", "name": "Booked By", "title": "Booked By", "render": booked_by_render },
                         { data: "id", "name": "Action", "title": "Action", "render": action_render }],
         "rowReorder": { selector: 'td:nth-child(2)' },
         "responsive": true, 
@@ -1063,6 +1064,22 @@ var vehicle_details_render = ( data, type, row, meta )=>{
         data += '<br/><span class="spanr12" ><em><strong>Hold Days: <span class="spang12" > '+row.hold_days+' </span></strong></em></span>'; 
         }
         
+  }
+return data;
+}
+
+var booked_by_render = ( data, type, row, meta )=>{
+  var data = '';
+  if(type === 'display'){ 
+        if( row.add_by_name && row.user_id ){
+            data += '<a href="<?=adminurl('Users/edit/')?>'+row.user_id+'" class="btn btn-sm btn-info" title="View User Details">';
+            data += '<i class="fa fa-user"></i> '+row.add_by_name;
+            data += '</a>';
+        } else if( row.add_by_name ){
+            data += '<span class="text-muted">'+row.add_by_name+'</span>';
+        } else {
+            data += '<span class="text-muted">System</span>';
+        }
   }
 return data;
 }

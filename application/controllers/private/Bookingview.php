@@ -417,7 +417,7 @@ class Bookingview extends CI_Controller{
             /*filter script start here*/
             
             $editSorting = "(CASE  WHEN a.edit_verify_status = 'edit' THEN 2 WHEN a.edit_verify_status = 'verify' THEN 1 ELSE 0 END) AS edit_id";
-            $select = 'a.*, DATEDIFF(dropdatetime, CURDATE()) AS days_difference, DATE_FORMAT(a.bookingdatetime,"%d-%b-%Y %r") as bookingdates,DATE_FORMAT(a.close_date,"%d-%b-%Y %r") as close_date, a.bookingdatetime as booked_on, DATE_FORMAT(a.ext_apply_on,"%d-%b-%Y %r") as ext_apply_on, DATE_FORMAT(a.pickupdatetime,"%d-%b-%Y %r") as pickupdates, DATE_FORMAT(a.dropdatetime,"%d-%b-%Y %r") as dropdates, md5(a.id) as enc_id, b.domain,c.model,'.$editSorting;
+            $select = 'a.*, DATEDIFF(dropdatetime, CURDATE()) AS days_difference, DATE_FORMAT(a.bookingdatetime,"%d-%b-%Y %r") as bookingdates,DATE_FORMAT(a.close_date,"%d-%b-%Y %r") as close_date, a.bookingdatetime as booked_on, DATE_FORMAT(a.ext_apply_on,"%d-%b-%Y %r") as ext_apply_on, DATE_FORMAT(a.pickupdatetime,"%d-%b-%Y %r") as pickupdates, DATE_FORMAT(a.dropdatetime,"%d-%b-%Y %r") as dropdates, md5(a.id) as enc_id, b.domain,c.model,u.id as user_id,'.$editSorting;
             
             if(empty($is_count)){
                // $select .= ',  d.amount as lates_recieved_amount '; 
@@ -431,6 +431,10 @@ class Bookingview extends CI_Controller{
             $join[1]['table'] = 'pt_vehicle_model as c';
             $join[1]['on'] = 'a.modelid = c.id';
             $join[1]['key'] = 'LEFT';
+            
+            $join[2]['table'] = 'users as u';
+            $join[2]['on'] = 'a.add_by = u.mobile';
+            $join[2]['key'] = 'LEFT';
             
             if(empty($is_count)){
             //$join[2]['table'] = '( SELECT pl.amount, pl.booking_id, pl.added_on FROM pt_payment_log pl INNER JOIN ( SELECT booking_id, MAX(added_on) AS latest_added_on FROM pt_payment_log WHERE amount > 0  GROUP BY booking_id ) latest ON pl.booking_id = latest.booking_id AND pl.added_on = latest.latest_added_on ) as d';

@@ -142,8 +142,7 @@ class Reservation_form extends CI_Controller
   {
     $post = $this->input->post();
 
-    // $bookurl = API_PATH . ('api/customer/Createentry/index');
-    $bookurl = 'https://dev.odac24.in/api/customer/Createentry/index';
+    $bookurl = API_PATH . ('api/customer/Createentry/index');
     $newpost['fullname'] = isset($post['fn']) ? $post['fn'] : '';
     $newpost['mobileno'] = isset($post['mob']) ? $post['mob'] : '';
     $newpost['emailid'] = isset($post['email']) ? $post['email'] : '';
