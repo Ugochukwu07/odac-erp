@@ -382,11 +382,7 @@
                         'paymode': paymode,
                         'bookingamount': bookingamount
                     };
-
-                    console.log(body);
-                    
-
-            //return;
+                
 
             if (checkFormData()) {
                 $.ajax({
