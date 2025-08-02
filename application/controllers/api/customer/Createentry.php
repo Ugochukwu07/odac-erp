@@ -48,6 +48,8 @@ class Createentry extends CI_Controller{
     $offeramount = isset($request['offeramount']) ? trim($request['offeramount']) : false;
     $advamount = isset($request['bookingamount']) ? trim($request['bookingamount']) : false;
     		$paymode = !empty($request['paymode']) ? trim($request['paymode']) : 'online';
+			echo json_encode($paymode);
+			exit;
 		
 		// Map frontend paymode values to database values
 		if ($paymode === 'advance' || $paymode === 'full') {
