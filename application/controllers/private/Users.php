@@ -32,7 +32,7 @@ class Users extends CI_Controller
     public function index()
     {
         // Get all users with their roles
-        $users = $this->c_model->getAll(table: 'users', where: null, limit: null, keys: '*', orderby: 'name ASC');
+        $users = $this->c_model->getAll(table: 'pt_users', where: null, limit: null, keys: '*', orderby: 'name ASC');
         
         // Add role information for each user
         foreach($users as &$user) {
@@ -74,7 +74,7 @@ class Users extends CI_Controller
         }
         
         // Get user data
-        $user = $this->c_model->getSingle('users', ['id' => $id], '*');
+        $user = $this->c_model->getSingle('pt_users', ['id' => $id], '*');
         if(!$user) {
             $this->session->set_flashdata('error', 'User not found.');
             redirect(adminfold('Users'));
@@ -139,7 +139,7 @@ class Users extends CI_Controller
         
         // Check if mobile/email already exists (for new users)
         if(!$role_id) {
-            $existing_user = $this->c_model->getSingle('users', ['mobile' => $mobile], 'id');
+            $existing_user = $this->c_model->getSingle('pt_users', ['mobile' => $mobile], 'id');
             if($existing_user) {
                 $this->session->set_flashdata('error', 'A user with this mobile/email already exists.');
                 redirect(adminfold('Users/add'));
@@ -162,13 +162,13 @@ class Users extends CI_Controller
         
         if($role_id) {
             // Update existing user
-            $this->c_model->update('users', $user_data, ['id' => $role_id]);
+            $this->c_model->update('pt_users', $user_data, ['id' => $role_id]);
             $user_id = $role_id;
             $message = 'User updated successfully.';
         } else {
             // Create new user
             $user_data['created_at'] = date('Y-m-d H:i:s');
-            $user_id = $this->c_model->insert('users', $user_data);
+            $user_id = $this->c_model->insert('pt_users', $user_data);
             $message = 'User created successfully.';
         }
         
@@ -210,7 +210,7 @@ class Users extends CI_Controller
         }
         
         // Get user data
-        $user = $this->c_model->getSingle('users', ['id' => $id], '*');
+        $user = $this->c_model->getSingle('pt_users', ['id' => $id], '*');
         if(!$user) {
             $this->session->set_flashdata('error', 'User not found.');
             redirect(adminfold('Users'));
@@ -220,7 +220,7 @@ class Users extends CI_Controller
         $this->c_model->delete('user_roles', ['user_id' => $id]);
         
         // Delete user
-        $this->c_model->delete('users', ['id' => $id]);
+        $this->c_model->delete('pt_users', ['id' => $id]);
         
         $this->session->set_flashdata('success', 'User deleted successfully.');
         redirect(adminfold('Users'));
@@ -245,7 +245,7 @@ class Users extends CI_Controller
         }
 
         // Get user by mobile
-        $user = $this->c_model->getSingle('users', ['mobile' => $mobile], 'id, name, mobile');
+        $user = $this->c_model->getSingle('pt_users', ['mobile' => $mobile], 'id, name, mobile');
         
         if($user) {
             echo json_encode(['success' => true, 'user_id' => $user['id'], 'user_name' => $user['name']]);
