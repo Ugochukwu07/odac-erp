@@ -152,7 +152,7 @@ class Reservation_form extends CI_Controller
     $newpost['couponid'] = isset($post['cpnid']) ? $post['cpnid'] : '';
     $newpost['stock'] = isset($post['stock']) ? $post['stock'] : '';
     $newpost['domainid'] = DOMAINID;
-    $newpost['apptype'] = 'w';
+    $newpost['apptype'] = 'A';
 
     $newpost['paymode'] = isset($post['paymode']) ? $post['paymode'] : '';
     log_message('error', 'Reservation_form - Original paymode from post: "' . $post['paymode'] . '"');
@@ -161,8 +161,8 @@ class Reservation_form extends CI_Controller
     log_message('error', 'Reservation_form - Full post data: ' . json_encode($post));
     $newpost['is_security_deposit'] = isset($post['is_deposit']) && $post['is_deposit'] == 'yes' ? 'yes' : 'no';
 
-    echo json_encode($newpost);
-    exit;
+    // echo json_encode($newpost);
+    // exit;
 
     /*check session start here*/
     $bookedfrom = 'directweb'; /*forcly added on 22 oct 2023 start to disable gateway it was blank*/
