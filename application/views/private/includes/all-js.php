@@ -382,8 +382,7 @@
                         'paymode': paymode,
                         'bookingamount': bookingamount
                     };
-                
-
+            
             if (checkFormData()) {
                 $.ajax({
                     type: 'POST',
