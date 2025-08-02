@@ -48,8 +48,6 @@ class Createentry extends CI_Controller{
     $offeramount = isset($request['offeramount']) ? trim($request['offeramount']) : false;
     $advamount = isset($request['bookingamount']) ? trim($request['bookingamount']) : false;
     		$paymode = !empty($request['paymode']) ? trim($request['paymode']) : 'online';
-			echo json_encode($paymode);
-			exit;
 		
 		// Map frontend paymode values to database values
 		if ($paymode === 'advance' || $paymode === 'full') {
@@ -108,7 +106,14 @@ class Createentry extends CI_Controller{
 		exit;
     }
     
-    if( !empty($apptype) && (strtoupper($apptype) == 'A') && !in_array($paymode,['cash','online']) ){
+    // Validate payment mode for both admin and web bookings
+    // Trim and convert to lowercase for case-insensitive comparison
+    $paymode = strtolower(trim($paymode));
+    
+    // Log the received values for debugging
+    log_message('error', 'Payment mode validation - Received paymode: "' . $paymode . '", apptype: ' . $apptype . ', bookedfrom: ' . $bookedfrom);
+    
+    if( !in_array($paymode,['cash','online']) ){
         $response['status'] = FALSE;
 		$response['message'] = 'Please enter valid payment mode !'; 
 		echo json_encode($response);

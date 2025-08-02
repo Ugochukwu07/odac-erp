@@ -155,6 +155,8 @@ class Reservation_form extends CI_Controller
     $newpost['apptype'] = 'w';
 
     $newpost['paymode'] = isset($post['paymode']) ? $post['paymode'] : '';
+    log_message('error', 'Reservation_form - Original paymode from post: "' . $post['paymode'] . '"');
+    log_message('error', 'Reservation_form - Processed paymode: "' . $newpost['paymode'] . '"');
     $newpost['is_security_deposit'] = isset($post['is_deposit']) && $post['is_deposit'] == 'yes' ? 'yes' : 'no';
 
 
@@ -193,6 +195,7 @@ class Reservation_form extends CI_Controller
     $res = curl_apis($bookurl, 'POST', $newpost);
     log_message('error', 'Booking API Request: ' . json_encode($newpost));
     log_message('error', 'Booking API Response: ' . json_encode($res));
+    log_message('error', 'Payment mode being sent: ' . $newpost['paymode'] . ', apptype: ' . $newpost['apptype']);
     // print_r( $res );
     $data['res'] = $res;
     $data['url'] = PEADEX . 'private/makebooking/reservationForm?utm=' . base64_encode($post['stock']);
