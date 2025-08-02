@@ -433,7 +433,7 @@ class Bookingview extends CI_Controller{
             $join[1]['key'] = 'LEFT';
             
             $join[2]['table'] = 'pt_users as u';
-            $join[2]['on'] = 'a.add_by = u.mobile';
+            $join[2]['on'] = 'a.add_by COLLATE utf8mb4_unicode_ci = u.mobile COLLATE utf8mb4_unicode_ci';
             $join[2]['key'] = 'LEFT';
             
             if(empty($is_count)){
