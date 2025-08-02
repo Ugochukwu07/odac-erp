@@ -131,7 +131,7 @@ class Createentry extends CI_Controller{
         log_message('error', 'Request details - apptype: ' . $apptype . ', bookedfrom: ' . $bookedfrom . ', RAZOR_PAY_ENABLE_DISABLE: ' . RAZOR_PAY_ENABLE_DISABLE);
         
         $response['status'] = FALSE;
-		$response['message'] = 'Please enter valid payment mode !'; 
+		$response['message'] = 'Please enter valid payment mode !' . $paymode; 
 		echo json_encode($response);
 		exit;
     }
