@@ -161,6 +161,8 @@ class Reservation_form extends CI_Controller
     log_message('error', 'Reservation_form - Full post data: ' . json_encode($post));
     $newpost['is_security_deposit'] = isset($post['is_deposit']) && $post['is_deposit'] == 'yes' ? 'yes' : 'no';
 
+    echo json_encode($newpost);
+    exit;
 
     /*check session start here*/
     $bookedfrom = 'directweb'; /*forcly added on 22 oct 2023 start to disable gateway it was blank*/
