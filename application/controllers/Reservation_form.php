@@ -157,6 +157,8 @@ class Reservation_form extends CI_Controller
     $newpost['paymode'] = isset($post['paymode']) ? $post['paymode'] : '';
     log_message('error', 'Reservation_form - Original paymode from post: "' . $post['paymode'] . '"');
     log_message('error', 'Reservation_form - Processed paymode: "' . $newpost['paymode'] . '"');
+    log_message('error', 'Reservation_form - RAZOR_PAY_ENABLE_DISABLE: ' . RAZOR_PAY_ENABLE_DISABLE);
+    log_message('error', 'Reservation_form - Full post data: ' . json_encode($post));
     $newpost['is_security_deposit'] = isset($post['is_deposit']) && $post['is_deposit'] == 'yes' ? 'yes' : 'no';
 
 
@@ -180,13 +182,14 @@ class Reservation_form extends CI_Controller
       $newpost['bookingamount'] = isset($post['bookingamount']) ? $post['bookingamount'] : '';
       $newpost['add_by_name'] = 'Website';
 
-      /*forcly added on 22 oct 2023 start to disable gateway*/
-      if ($bookedfrom == 'directweb' && RAZOR_PAY_ENABLE_DISABLE == 'disable') {
-        $newpost['bookedfrom'] = 'directweb';
-        $newpost['bookingamount'] = '0';
-        $newpost['paymode'] = 'cash';
-      }
-      /*forcly added on 22 oct 2023 start */
+             /*forcly added on 22 oct 2023 start to disable gateway*/
+       if ($bookedfrom == 'directweb' && RAZOR_PAY_ENABLE_DISABLE == 'disable') {
+         $newpost['bookedfrom'] = 'directweb';
+         $newpost['bookingamount'] = '0';
+         $newpost['paymode'] = 'cash';
+         log_message('error', 'Reservation_form - Payment mode forced to cash due to RAZOR_PAY_ENABLE_DISABLE = disable');
+       }
+       /*forcly added on 22 oct 2023 start */
     }
 
 

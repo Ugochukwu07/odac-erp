@@ -111,9 +111,25 @@ class Createentry extends CI_Controller{
     $paymode = strtolower(trim($paymode));
     
     // Log the received values for debugging
-    log_message('error', 'Payment mode validation - Received paymode: "' . $paymode . '", apptype: ' . $apptype . ', bookedfrom: ' . $bookedfrom);
+    log_message('error', 'Payment mode validation - Received paymode: "' . $paymode . '", apptype: ' . $apptype . ', bookedfrom: ' . $bookedfrom . ', RAZOR_PAY_ENABLE_DISABLE: ' . RAZOR_PAY_ENABLE_DISABLE);
+    
+    // Handle server-specific payment mode overrides
+    if ($bookedfrom == 'directweb' && RAZOR_PAY_ENABLE_DISABLE == 'disable') {
+        $paymode = 'cash';
+        log_message('error', 'Payment mode forced to cash due to RAZOR_PAY_ENABLE_DISABLE = disable');
+    }
+    
+    // Additional server-specific handling for edge cases
+    if (empty($paymode) || $paymode === 'null' || $paymode === 'undefined') {
+        $paymode = 'online'; // Default to online if no valid payment mode
+        log_message('error', 'Payment mode was empty/null, defaulting to online');
+    }
     
     if( !in_array($paymode,['cash','online']) ){
+        // Log detailed information for debugging
+        log_message('error', 'Payment mode validation failed. Final paymode: "' . $paymode . '", Valid modes: cash, online');
+        log_message('error', 'Request details - apptype: ' . $apptype . ', bookedfrom: ' . $bookedfrom . ', RAZOR_PAY_ENABLE_DISABLE: ' . RAZOR_PAY_ENABLE_DISABLE);
+        
         $response['status'] = FALSE;
 		$response['message'] = 'Please enter valid payment mode !'; 
 		echo json_encode($response);
