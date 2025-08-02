@@ -191,11 +191,9 @@ class Reservation_form extends CI_Controller
        /*forcly added on 22 oct 2023 start */
     }
 
-
-    echo json_encode($newpost);
-    exit;
-
     $res = curl_apis($bookurl, 'POST', $newpost);
+    echo json_encode($res);
+    exit;
     log_message('error', 'Booking API Request: ' . json_encode($newpost));
     log_message('error', 'Booking API Response: ' . json_encode($res));
     log_message('error', 'Payment mode being sent: ' . $newpost['paymode'] . ', apptype: ' . $newpost['apptype']);
