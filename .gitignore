@@ -40,7 +40,7 @@ application/logs/
 # uploads/
 
 # Composer (if using)
-vendor/
+# vendor/
 composer.lock
 
 # Node modules (if using)
