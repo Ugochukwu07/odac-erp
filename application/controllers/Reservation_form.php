@@ -192,7 +192,7 @@ class Reservation_form extends CI_Controller
     }
 
     $res = curl_apis($bookurl, 'POST', $newpost);
-    echo json_encode($res);
+    echo json_encode($bookurl);
     exit;
     log_message('error', 'Booking API Request: ' . json_encode($newpost));
     log_message('error', 'Booking API Response: ' . json_encode($res));
