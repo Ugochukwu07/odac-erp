@@ -85,6 +85,7 @@ class Dashboard extends CI_Controller{
 		$tbus = $this->db->query("select SUM(totalamount) AS total from pt_booking where attemptstatus NOT IN('cancel','reject') AND DATE(pickupdatetime) >='".date('Y-m-01')."' AND DATE(dropdatetime) <='".date('Y-m-d')."'  ")->row_array();
 
 		$data['thismonthsale'] = !empty($tbus) ? $tbus['total'] : 0;
+		$data['totalbusiness'] = !empty($tbus) ? $tbus['total'] : 0;
 
 		/**today Sale business*/
 		$todaySale = $this->db->query("select SUM(bookingamount) AS total from pt_booking where  DATE(bookingdatetime)= '".date('Y-m-d')."' and attemptstatus NOT IN('cancel','reject','temp')")->row_array();
