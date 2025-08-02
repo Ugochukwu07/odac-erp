@@ -225,4 +225,32 @@ class Users extends CI_Controller
         $this->session->set_flashdata('success', 'User deleted successfully.');
         redirect(adminfold('Users'));
     }
+
+    /**
+     * Get user ID by mobile number (AJAX endpoint)
+     */
+    public function getUserByMobile()
+    {
+        // Check if it's an AJAX request
+        if(!$this->input->is_ajax_request()) {
+            show_404();
+            return;
+        }
+
+        $mobile = $this->input->post('mobile');
+        
+        if(empty($mobile)) {
+            echo json_encode(['success' => false, 'message' => 'Mobile number is required']);
+            return;
+        }
+
+        // Get user by mobile
+        $user = $this->c_model->getSingle('users', ['mobile' => $mobile], 'id, name, mobile');
+        
+        if($user) {
+            echo json_encode(['success' => true, 'user_id' => $user['id'], 'user_name' => $user['name']]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'User not found']);
+        }
+    }
 } 

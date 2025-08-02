@@ -1071,17 +1071,33 @@ return data;
 var booked_by_render = ( data, type, row, meta )=>{
   var data = '';
   if(type === 'display'){ 
-        if( row.add_by_name && row.user_id ){
-            data += '<a href="<?=adminurl('Users/edit/')?>'+row.user_id+'" class="btn btn-sm btn-info" title="View User Details">';
+        if( row.add_by_name ){
+            data += '<a href="javascript:void(0)" onclick="getUserDetails(\''+row.add_by+'\')" class="btn btn-sm btn-info" title="View User Details">';
             data += '<i class="fa fa-user"></i> '+row.add_by_name;
             data += '</a>';
-        } else if( row.add_by_name ){
-            data += '<span class="text-muted">'+row.add_by_name+'</span>';
         } else {
             data += '<span class="text-muted">System</span>';
         }
   }
 return data;
+}
+
+function getUserDetails(mobile) {
+    $.ajax({
+        type: 'POST',
+        url: '<?=base_url('private/Users/getUserByMobile')?>',
+        data: {mobile: mobile},
+        success: function(response) {
+            if(response.success && response.user_id) {
+                window.open('<?=adminurl('Users/edit/')?>' + response.user_id, '_blank');
+            } else {
+                alert('User not found');
+            }
+        },
+        error: function() {
+            alert('Error fetching user details');
+        }
+    });
 }
 
 function getDateVal( vl ){
