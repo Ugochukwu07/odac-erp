@@ -944,67 +944,25 @@ public function verifyEditLog(){
             // exit;
               
              
-              // Try to use mPDF if available, otherwise show HTML version
-              if (file_exists(FCPATH.'vendor/autoload.php')) {
-                  require_once FCPATH.'vendor/autoload.php';
-                  if (class_exists('\Mpdf\Mpdf')) {
-                      // Use mPDF
-                      header('Content-Type: application/pdf; charset=utf-8');
-                      $mpdf = new \Mpdf\Mpdf(); 
-                      $filename = $fetch['bookingid'].".pdf"; 
-                      $mpdf->SetFont('Arial');
-                      $mpdf->SetFont('Helvetica');
-                      $mpdf->SetFont('sans-serif'); 
-                      $mpdf->SetTitle($filename);
-                      $mpdf->setAutoTopMargin = 'pad';
-                      $mpdf->autoMarginPadding = 10;
-                      $mpdf->WriteHTML($html,2);
-                      $mpdf->Output($filename, "I"); 
-                      exit;
-                  }
-              } elseif (file_exists(APPPATH.'third_party/mpdf/vendor/autoload.php')) {
-                  require_once APPPATH.'third_party/mpdf/vendor/autoload.php';
-                  if (class_exists('\Mpdf\Mpdf')) {
-                      // Use mPDF
-                      header('Content-Type: application/pdf; charset=utf-8');
-                      $mpdf = new \Mpdf\Mpdf(); 
-                      $filename = $fetch['bookingid'].".pdf"; 
-                      $mpdf->SetFont('Arial');
-                      $mpdf->SetFont('Helvetica');
-                      $mpdf->SetFont('sans-serif'); 
-                      $mpdf->SetTitle($filename);
-                      $mpdf->setAutoTopMargin = 'pad';
-                      $mpdf->autoMarginPadding = 10;
-                      $mpdf->WriteHTML($html,2);
-                      $mpdf->Output($filename, "I"); 
-                      exit;
-                  }
-              }
-              
-              // Fallback: Show HTML version with print-friendly styling
               header('Content-Type: text/html; charset=utf-8');
-              echo '<!DOCTYPE html>
-              <html>
-              <head>
-                  <meta charset="utf-8">
-                  <title>Booking Slip - ' . $fetch['bookingid'] . '</title>
-                  <style>
-                      body { font-family: Arial, sans-serif; margin: 20px; }
-                      .print-button { 
-                          position: fixed; top: 20px; right: 20px; 
-                          background: #007bff; color: white; padding: 10px 20px; 
-                          border: none; border-radius: 5px; cursor: pointer;
-                      }
-                      @media print {
-                          .print-button { display: none; }
-                      }
-                  </style>
-              </head>
-              <body>
-                  <button class="print-button" onclick="window.print()">Print Slip</button>
-                  ' . $html . '
-              </body>
-              </html>';
+              require_once APPPATH.'/third_party/mpdf/vendor/autoload.php'; 
+
+              $mpdf = new \Mpdf\Mpdf(); 
+
+              $filename = $fetch['bookingid'].".pdf"; 
+
+              $mpdf->SetFont('Arial');
+              $mpdf->SetFont('Helvetica');
+              $mpdf->SetFont('sans-serif'); 
+              $mpdf->SetTitle($filename);
+
+              $mpdf->setAutoTopMargin = 'pad';
+              $mpdf->autoMarginPadding = 10;
+
+              $mpdf->WriteHTML($html,2);
+              // download!  use D , for view use I
+              $mpdf->Output($filename, "I"); 
+
               exit;   
 	    }
 	    echo 'no direct access allowed';
