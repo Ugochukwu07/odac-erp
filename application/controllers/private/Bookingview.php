@@ -269,6 +269,7 @@ class Bookingview extends CI_Controller{
             $like = null;
             $likekey = null;
             $likeaction = null;
+            $in_not_in = null;
             
             $bookingtype = $post['type'];
             $is_rest_amount = !empty($post['is_rest_amount']) ? $post['is_rest_amount']:'';
@@ -279,7 +280,22 @@ class Bookingview extends CI_Controller{
             // Apply admin hierarchy filter
             $hierarchy_filter = get_admin_hierarchy_filter();
             if (!empty($hierarchy_filter)) {
-                $where = array_merge($where, $hierarchy_filter);
+                // Handle IN clause separately from regular where conditions
+                if (isset($hierarchy_filter['a.add_by IN'])) {
+                    $in_not_in = [
+                        [
+                            'type' => 'in',
+                            'key' => 'a.add_by',
+                            'inlist' => $hierarchy_filter['a.add_by IN']
+                        ]
+                    ];
+                    unset($hierarchy_filter['a.add_by IN']);
+                }
+                
+                // Add remaining where conditions
+                if (!empty($hierarchy_filter)) {
+                    $where = array_merge($where, $hierarchy_filter);
+                }
             }
             
             
@@ -462,9 +478,7 @@ class Bookingview extends CI_Controller{
               
             
            
-            
-            
-            $in_not_in = null; 
+             
             
            // echo json_encode($where);
             
