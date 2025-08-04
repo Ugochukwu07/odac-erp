@@ -245,7 +245,7 @@ class Users extends CI_Controller
         }
 
         // Get user by mobile (phone number) from users table
-        $user = $this->c_model->getSingle('users', ['mobile' => $mobile], 'id, name, mobile');
+        $user = $this->c_model->getSingle('pt_users', ['mobile' => $mobile], 'id, name, mobile');
         
         if($user) {
             echo json_encode(['success' => true, 'user_id' => $user['id'], 'user_name' => $user['name']]);
