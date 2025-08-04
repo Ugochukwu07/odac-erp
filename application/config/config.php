@@ -574,19 +574,19 @@ if (!defined('CAREEMAIL')) define('CAREEMAIL', '');
 if (!defined('SMSADMINMOBILE')) define('SMSADMINMOBILE', '');
 if (!defined('ADMINEMAIL')) define('ADMINEMAIL', '');
 if (!defined('DOMAINNAME')) define('DOMAINNAME', defined('STDIN') ? 'localhost' : ($_SERVER['HTTP_HOST'] ?? 'localhost'));
-if (!defined('COMPANYNAME')) define('COMPANYNAME', 'Odeac');
+if (!defined('COMPANYNAME')) define('COMPANYNAME', getenv('COMPANY_NAME') ?: 'Odeac');
 if (!defined('ROOTPATH')) define('ROOTPATH', defined('STDIN') ? '/' : ($_SERVER['DOCUMENT_ROOT'] . '/'));
 if (!defined('REGISTRATIONNO')) define('REGISTRATIONNO', '');
 if (!defined('HEADOFFICE')) define('HEADOFFICE', '');
 if (!defined('BRANCHOFFICE')) define('BRANCHOFFICE', '');
-if (!defined('WHATSUP')) define('WHATSUP', '');
+if (!defined('WHATSUP')) define('WHATSUP', getenv('WHATSAPP_NO') ?: '');
 if (!defined('MAPSCRIPT')) define('MAPSCRIPT', '');
 if (!defined('URL')) define('URL', $base_url);
 // Logo configuration from environment variables
 if (!defined('LOGO')) define('LOGO', getenv('LOGO_URL') ?: UPLOADS . (getenv('UPLOADED_LOGO') ?: 'logo.png'));
 if (!defined('DEFAULT_LOGO')) define('DEFAULT_LOGO', getenv('DEFAULT_LOGO_URL') ?: 'https://www.odac24.in/assets/cli/image/odac-cabs24.png');
 
-if (!defined('PEADEXADMIN')) define('PEADEXADMIN', 'Odeac');
+if (!defined('PEADEXADMIN')) define('PEADEXADMIN', getenv('COMPANY_NAME') ?: 'Odeac');
 if (!defined('PEADEX')) define('PEADEX', $base_url);
 if (!defined('GGOGLEPLACEKEY')) define('GGOGLEPLACEKEY', getenv('GGOGLEPLACEKEY') ?: 'AIzaSyA33Nc-vkogu2ccN7evkSxFfsmS6PaGZ3Q');
 if (!defined('GGOGLEMATRIX')) define('GGOGLEMATRIX', getenv('GGOGLEMATRIX') ?: 'AIzaSyA33Nc-vkogu2ccN7evkSxFfsmS6PaGZ3Q');
