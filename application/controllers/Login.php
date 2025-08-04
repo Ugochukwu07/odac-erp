@@ -265,6 +265,7 @@ function register(){
             $save['uniqueid'] = $mobileno;
             $save['password'] = $password;
             $save['enpassword'] = md5($password);
+            $save['address'] = ''; // Set default empty address
             $save['completeprofile'] = 'yes';
             $save['status']   = 'yes';
             $save['add_date'] = date('Y-m-d H:i:s');
