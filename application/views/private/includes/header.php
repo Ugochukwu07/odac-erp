@@ -54,12 +54,14 @@ if (!function_exists('has_permission')) {
 
 <body class="hold-transition skin-blue sidebar-mini" onLoad="viewmsg();">
 <div class="wrapper">
-<header class="main-header" style="background: white;">
+<header class="main-header">
+  <div style="background: white;">
     <!-- Logo -->
     <a href="<?php echo adminurl('Dashboard');?>" class="navbar-brand">
       <span class="logo-mini"><b>O</b>DE</span> 
       <span class="logo-lg"><?php echo COMPANYNAME;?></span>
     </a>
+  </div>
 
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-expand-lg navbar-static-top">
