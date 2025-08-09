@@ -1,10 +1,11 @@
-<style>
-  .nav-item.dropdown,
-  .nav-item.dropdown * {
-    background-color:rgba(255, 0, 0, 0.45) !important;
-  }
-</style>
 </head>
+<?php
+/*
+ | Fix header dropdown behavior
+ | - Remove temporary debug background styling that affected dropdown layout
+ | - Keep head closing tag intact; all required CSS is loaded from `all-css.php`
+ */
+?>
 <?php
 $session_data = $this->session->userdata('adminloginstatus');
 if(empty($session_data)){
@@ -78,12 +79,12 @@ if (!function_exists('has_permission')) {
         <!-- Navbar Custom Menu -->
         <div class="navbar-nav ms-auto">
           <!-- Messages: style can be found in dropdown.less-->
-          <div class="nav-item dropdown position-static">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-envelope-o"></i>
               <span class="badge bg-success">4</span>
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="#">Message 1</a></li>
               <li><a class="dropdown-item" href="#">Message 2</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -92,12 +93,12 @@ if (!function_exists('has_permission')) {
           </div>
 
           <!-- Notifications -->
-          <div class="nav-item dropdown position-static">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-bell-o"></i>
               <span class="badge bg-warning">10</span>
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="#">Notification 1</a></li>
               <li><a class="dropdown-item" href="#">Notification 2</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -106,12 +107,12 @@ if (!function_exists('has_permission')) {
           </div>
 
           <!-- Tasks -->
-          <div class="nav-item dropdown position-static">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-flag-o"></i>
               <span class="badge bg-danger">9</span>
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="#">Task 1</a></li>
               <li><a class="dropdown-item" href="#">Task 2</a></li>
               <li><hr class="dropdown-divider"></li>
@@ -121,11 +122,11 @@ if (!function_exists('has_permission')) {
 
           <!-- User Account: style can be found in dropdown.less -->
           <div class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-user"></i>
               <span class="d-none d-lg-inline"><?php echo $loginUserName;?></span>
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-end">
               <li class="dropdown-header">User Menu</li>
               <?php if($user_type=='admin'){?>
                 <li><a class="dropdown-item" href="<?php echo adminurl('Changepassword');?>"><i class="fa fa-key me-2"></i>Change Password</a></li>

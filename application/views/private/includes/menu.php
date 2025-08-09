@@ -88,7 +88,7 @@ if(!function_exists('get_parent_id_s')){
     <section class="sidebar">
       <div class="user-panel">
         <div class="image">
-         <center><img src="<?php echo DEFAULT_LOGO;?>" class="text-center" style="" ></center>
+         <center><img src="<?php echo DEFAULT_LOGO;?>" width="100" height="100" class="text-center" style="" ></center>
         </div>
       </div>
       
