@@ -54,7 +54,7 @@ if (!function_exists('has_permission')) {
 
 <body class="hold-transition skin-blue sidebar-mini" onLoad="viewmsg();">
 <div class="wrapper">
-<header class="main-header">
+<header class="main-header" style="background: white;">
     <!-- Logo -->
     <a href="<?php echo adminurl('Dashboard');?>" class="navbar-brand">
       <span class="logo-mini"><b>O</b>DE</span> 
@@ -82,7 +82,7 @@ if (!function_exists('has_permission')) {
     position: absolute;
     right: 1%;">
           <!-- Messages: style can be found in dropdown.less-->
-          <div class="nav-item dropdown">
+          <!-- <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-envelope-o"></i>
               <span class="badge bg-success">4</span>
@@ -93,10 +93,10 @@ if (!function_exists('has_permission')) {
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#">View all messages</a></li>
             </ul>
-          </div>
+          </div> -->
 
           <!-- Notifications -->
-          <div class="nav-item dropdown">
+          <!-- <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-bell-o"></i>
               <span class="badge bg-warning">10</span>
@@ -107,10 +107,10 @@ if (!function_exists('has_permission')) {
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#">View all notifications</a></li>
             </ul>
-          </div>
+          </div> -->
 
           <!-- Tasks -->
-          <div class="nav-item dropdown">
+          <!-- <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <i class="fa fa-flag-o"></i>
               <span class="badge bg-danger">9</span>
@@ -121,7 +121,7 @@ if (!function_exists('has_permission')) {
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#">View all tasks</a></li>
             </ul>
-          </div>
+          </div> -->
 
           <!-- User Account: style can be found in dropdown.less -->
           <div class="nav-item dropdown">

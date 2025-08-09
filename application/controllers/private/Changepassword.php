@@ -13,8 +13,10 @@ class Changepassword extends CI_Controller{
 	$currentpage = 'Changepassword'; 
 	$data['posturl'] = adminurl( $currentpage ).'/';
 
-	$table = 'adminlogin';
-    $id = 1;
+	// Use the new RBAC users table and current logged-in user
+	$table = 'users';
+	$sessionData = $this->session->userdata('adminloginstatus');
+	$id = !empty($sessionData['user_id']) ? (int)$sessionData['user_id'] : null;
 	 
 	
 	$data['title'] = 'Update Password';
@@ -35,7 +37,7 @@ class Changepassword extends CI_Controller{
 	    $dbuser = $this->c_model->getSingle($table, array( 'id'=>$id ) );
 	    
 	    $data['id'] = $dbuser['id']; 
-		$data['username'] = $dbuser['username']; 
+		$data['username'] = !empty($dbuser['mobile']) ? $dbuser['mobile'] : '';
 		$data['password'] = $dbuser['password']; 
 	 }
 
@@ -53,8 +55,9 @@ class Changepassword extends CI_Controller{
 		 
 		$dbpost = $this->input->post();
 		
-		$spost['username'] = $dbpost['username'];  
-        $spost['password'] = md5($dbpost['password']);  
+		// Only update password for current user
+		$spost = [];
+		$spost['password'] = md5($dbpost['password']);  
   		$spost = $this->security->xss_clean($spost);
  
 	      
@@ -67,7 +70,7 @@ class Changepassword extends CI_Controller{
 		
 		if( $id ){
 		$ststus = $this->c_model->saveupdate( $table, $spost, NULL, $postwhere, NULL );	
-		$this->session->unset_userdata('adminlogindata');
+		$this->session->unset_userdata('adminloginstatus');
 		redirect( base_url( 'mylogin.html' ));
 		
 		}

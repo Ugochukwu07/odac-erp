@@ -38,7 +38,10 @@ class Changedomain extends CI_Controller{
     
     /** Set Default Domain Session Start Script**/
     if( empty($this->session->userdata( 'checkdomain' )) ){
-        	$arrayName = array('checkdomain' => ['domain'=>'odac24.in','domainid'=>'2']  );
+        	$arrayName = array('checkdomain' => [
+				'domain'=> $_SERVER['HTTP_HOST'],
+				'domainid'=>'2'
+			]  );
     	    $this->session->set_userdata( $arrayName ); 
     	    redirect( adminurl('dashboard') ); exit;
     }

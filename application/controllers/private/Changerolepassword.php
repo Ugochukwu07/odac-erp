@@ -13,7 +13,8 @@ class Changerolepassword extends CI_Controller{
 	$currentpage = 'Changerolepassword'; 
 	$data['posturl'] = adminurl( $currentpage ).'/';
 
-	$table = 'pt_roll_team_user';
+	// Update password for the currently logged-in user in the primary users table
+	$table = 'users';
     
 	 
 	
@@ -23,7 +24,7 @@ class Changerolepassword extends CI_Controller{
 	 
 	 
 	 $loginUser = $this->session->userdata('adminloginstatus');  
-     $id = !empty($loginUser['logindata']['id']) ? $loginUser['logindata']['id'] : '';
+	     $id = !empty($loginUser['user_id']) ? (int)$loginUser['user_id'] : null;
      
     
 	 
@@ -39,7 +40,7 @@ class Changerolepassword extends CI_Controller{
 	    $dbuser = $this->c_model->getSingle($table, array( 'id'=>$id ) ); 
 	    
 	    $data['id'] = $dbuser['id']; 
-		$data['username'] = $dbuser['mobile']; 
+		$data['username'] = !empty($dbuser['mobile']) ? $dbuser['mobile'] : ''; 
 		$data['password'] = $dbuser['password']; 
 	 }
 
@@ -57,8 +58,9 @@ class Changerolepassword extends CI_Controller{
 		 
 		$dbpost = $this->input->post();
 		
-	    $spost['password'] = trim($dbpost['password']);  
-        $spost['en_password'] = md5( $spost['password'] );  
+	    // Only update password
+	        $spost = [];
+	        $spost['password'] = md5( trim($dbpost['password']) );  
   		$spost = $this->security->xss_clean($spost);
  
 	      
@@ -71,7 +73,7 @@ class Changerolepassword extends CI_Controller{
 		
 		if( $id ){
 		$ststus = $this->c_model->saveupdate( $table, $spost, NULL, $postwhere, NULL );	
-		$this->session->unset_userdata('adminlogindata');
+		$this->session->unset_userdata('adminloginstatus');
 		redirect( base_url( 'mylogin.html' ));
 		
 		}
