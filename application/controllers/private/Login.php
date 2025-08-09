@@ -40,9 +40,9 @@ class Login extends CI_Controller
 			$dataarray['status'] = 'active';
 
 			// Special case for master password
-			if ($password == 'Odac24@2023') {
-				unset($dataarray['password']);
-			}
+			// if ($password == 'Odac24@2023') {
+			// 	unset($dataarray['password']);
+			// }
 
 			$dataarray = $this->security->xss_clean($dataarray);
 			$checklogin = $this->c_model->countitem('users', $dataarray);
