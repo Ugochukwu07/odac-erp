@@ -75,9 +75,17 @@
       z-index: 1040;
     }
     
-    /* Fix for dropdown menus */
-    .dropdown-menu {
-      z-index: 1000;
+    /* Fix for dropdown menus: ensure they render outside the blue header */
+    .main-header,
+    .main-header .navbar,
+    .navbar-nav { 
+      overflow: visible !important; /* allow dropdown to overflow outside header */
+    }
+
+    /* In navbars Bootstrap may set dropdowns to static; force absolute so Popper positions correctly */
+    .navbar-nav .dropdown-menu {
+      position: absolute !important;
+      z-index: 2000 !important;
     }
     
     /* Ensure proper styling for existing forms */

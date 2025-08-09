@@ -77,7 +77,7 @@ if (!function_exists('has_permission')) {
         </div>
 
         <!-- Navbar Custom Menu -->
-        <div class="navbar-nav ms-auto">
+        <div class="navbar-nav ms-auto" style="overflow: visible;">
           <!-- Messages: style can be found in dropdown.less-->
           <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="javascript:void(0)" role="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -135,7 +135,7 @@ class Role_business_report extends CI_Controller{
    
    
 
-  protected function getRecordsFromDb( $post ){
+  protected function getRecordsFromDb( $post , $limit = null , $start = null, $is_count = null ){
       
         	$where = []; 
             $like = null;
@@ -167,6 +167,7 @@ class Role_business_report extends CI_Controller{
              
             
             $in_not_in = null; 
+            $join = null;
             
             //echo json_encode($where); 
                  
